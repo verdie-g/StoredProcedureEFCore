@@ -1,3 +1,4 @@
+Benchmark made with 50000 rows
 ``` ini
 
 BenchmarkDotNet=v0.10.3.0, OS=Microsoft Windows version 10.0.14393
