@@ -11,7 +11,7 @@ namespace Test
 {
     public static class DbTools
     {
-        public static Dictionary<string, PropertyInfo[]> properties { get; set; } = new Dictionary<string, PropertyInfo[]>();
+        private static Dictionary<string, PropertyInfo[]> properties { get; set; } = new Dictionary<string, PropertyInfo[]>();
 
         public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, Func<IDataReader, T> projection, params string[] parameters) where T :  new()
         {
