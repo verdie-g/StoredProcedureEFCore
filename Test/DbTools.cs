@@ -68,33 +68,30 @@ namespace Test
 
         public static IEnumerable<T> AutoMap<T>(this IDataReader reader)
         {
+            var res = new List<T>();
             while (reader.Read())
             {
-                yield return reader.ToModel<T>();
+                T obj = Activator.CreateInstance<T>();
+                Type objType = typeof(T);
+                PropertyInfo[] props;
+                try
+                {
+                    props = properties[objType.FullName];
+                }
+                catch
+                {
+                    props = objType.GetProperties();
+                    properties[objType.FullName] = props;
+                }
+                foreach (PropertyInfo prop in props)
+                {
+                    if (Equals(reader[prop.Name], DBNull.Value))
+                        continue;
+                    prop.SetValue(obj, reader[prop.Name]);
+                }
+                res.Add(obj);
             }
-        }
-
-        private static T ToModel<T>(this IDataReader reader)
-        {
-            T obj = Activator.CreateInstance<T>();
-            Type objType = typeof(T);
-            PropertyInfo[] props;
-            try
-            {
-                props = properties[objType.FullName];
-            }
-            catch
-            {
-                props = objType.GetProperties();
-                properties[objType.FullName] = props;
-            }
-            foreach (PropertyInfo prop in props)
-            {
-                if (Equals(reader[prop.Name], DBNull.Value))
-                    continue;
-                prop.SetValue(obj, reader[prop.Name]);
-            }
-            return obj;
+            return res;
         }
 
         private static List<T> DataReaderMapToList<T>(IDataReader dr)
