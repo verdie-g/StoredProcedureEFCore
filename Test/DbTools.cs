@@ -11,8 +11,6 @@ namespace Test
 {
     public static class DbTools
     {
-        private static Dictionary<string, PropertyInfo[]> properties { get; set; } = new Dictionary<string, PropertyInfo[]>();
-
         public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, Func<IDataReader, T> projection, params string[] parameters) where T :  new()
         {
             var command = context.Database.GetDbConnection().CreateCommand();
@@ -44,7 +42,6 @@ namespace Test
             var res = command.ExecuteReader();
 
             return DataReaderMapToList<T>(res);
-
         }
         
         public static List<T> ExecuteStoredProcedure3<T>(this DbContext context, string name)
@@ -66,19 +63,18 @@ namespace Test
             }
         }
 
+        private static Dictionary<string, PropertyInfo[]> properties = new Dictionary<string, PropertyInfo[]>();
+
         public static IEnumerable<T> AutoMap<T>(this IDataReader reader)
         {
             var res = new List<T>();
+            PropertyInfo[] props;
+
             while (reader.Read())
             {
                 T obj = Activator.CreateInstance<T>();
                 Type objType = typeof(T);
-                PropertyInfo[] props;
-                try
-                {
-                    props = properties[objType.FullName];
-                }
-                catch
+                if (!properties.TryGetValue(objType.FullName, out props))
                 {
                     props = objType.GetProperties();
                     properties[objType.FullName] = props;
