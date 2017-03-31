@@ -12,6 +12,6 @@ dotnet cli version=1.0.1
 ```
  |                                        Method |        Mean |    StdDev |
  |---------------------------------------------- |------------ |---------- |
- |                  LoadStoredProcedureHardCoded | 187.0143 ms | 1.4439 ms |
- |                 LoadStoredProcedureReflective | 168.0381 ms | 0.8370 ms |
- | LoadStoredProcedureReflectiveWithOptimisation | 160.7349 ms | 5.4950 ms |
+ |                  LoadStoredProcedureHardCoded | 188.3435 ms | 1.8572 ms |
+ |                 LoadStoredProcedureReflective | 180.0493 ms | 3.4271 ms |
+ | LoadStoredProcedureReflectiveWithOptimisation | 167.5520 ms | 1.0534 ms |
