@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Data.Common;
-using System.Threading.Tasks;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +10,7 @@ namespace Test
 {
     public static class DbTools
     {
-        public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, Func<IDataReader, T> projection, params string[] parameters) where T :  new()
+        public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, Func<IDataReader, T> projection, params string[] parameters)
         {
             var command = context.Database.GetDbConnection().CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
@@ -63,22 +62,23 @@ namespace Test
             }
         }
 
-        private static Dictionary<string, PropertyInfo[]> properties = new Dictionary<string, PropertyInfo[]>();
+        private static Dictionary<string, PropertyInfo[]> properties = new Dictionary<string, PropertyInfo[]>(10); // Stored procedure result model count
 
         public static IEnumerable<T> AutoMap<T>(this IDataReader reader)
         {
             var res = new List<T>();
+            Type objType = typeof(T);
             PropertyInfo[] props;
+
+            if (!properties.TryGetValue(objType.FullName, out props))
+            {
+                props = objType.GetProperties();
+                properties[objType.FullName] = props;
+            }
 
             while (reader.Read())
             {
                 T obj = Activator.CreateInstance<T>();
-                Type objType = typeof(T);
-                if (!properties.TryGetValue(objType.FullName, out props))
-                {
-                    props = objType.GetProperties();
-                    properties[objType.FullName] = props;
-                }
                 foreach (PropertyInfo prop in props)
                 {
                     if (Equals(reader[prop.Name], DBNull.Value))
