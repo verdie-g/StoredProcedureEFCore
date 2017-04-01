@@ -16,15 +16,8 @@ namespace Test
             var summary = BenchmarkRunner.Run<DataAccessBase>();
             Console.WriteLine(summary);
             //var da = new DataAccessBase();
-            //for (int i = 0; i < 5; ++i)
-            //{
-            //    Task t1 = TestProcedure("HardCoded", da.LoadStoredProcedureHardCoded);
-            //    t1.Wait();
-            //    Task t2 = TestProcedure("Reflective", da.LoadStoredProcedureReflective);
-            //    t2.Wait();
-            //    Task t3 = TestProcedure("Optimised Reflective", da.LoadStoredProcedureReflectiveWithOptimisation);
-            //    t3.Wait();
-            //}
+            //Task t3 = TestProcedure("Optimised Reflective", da.LoadStoredProcedureReflectiveWithOptimisation);
+            //t3.Wait();
             Console.Read();
         }
 

@@ -10,8 +10,12 @@ dotnet cli version=1.0.1
 
 
 ```
- |                                        Method |        Mean |    StdDev |
- |---------------------------------------------- |------------ |---------- |
- |                  LoadStoredProcedureHardCoded | 188.3435 ms | 1.8572 ms |
- |                 LoadStoredProcedureReflective | 180.0493 ms | 3.4271 ms |
- | LoadStoredProcedureReflectiveWithOptimisation | 167.5520 ms | 1.0534 ms |
+ |                                        Method |        Mean |     StdDev |      Median |
+ |---------------------------------------------- |------------ |----------- |------------ |
+ |                  LoadStoredProcedureHardCoded | 194.2672 ms | 12.8725 ms | 187.1605 ms |
+ |                 LoadStoredProcedureReflective | 168.6564 ms |  0.6452 ms | 168.8288 ms |
+ | LoadStoredProcedureReflectiveWithOptimisation | 160.1283 ms |  1.2191 ms | 160.0825 ms |
+
+ The third method will also read the Field attribute to get the database field name.
+ It is useful when the name contains an underscore in the database but not in the c# code.
+ Ex: creator_id => CreatorId

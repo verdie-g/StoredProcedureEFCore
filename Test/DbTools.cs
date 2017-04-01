@@ -62,28 +62,19 @@ namespace Test
             }
         }
 
-        private static Dictionary<string, PropertyInfo[]> properties = new Dictionary<string, PropertyInfo[]>(10); // Stored procedure result model count
-
         public static IEnumerable<T> AutoMap<T>(this IDataReader reader)
         {
             var res = new List<T>();
-            Type objType = typeof(T);
-            PropertyInfo[] props;
-
-            if (!properties.TryGetValue(objType.FullName, out props))
-            {
-                props = objType.GetProperties();
-                properties[objType.FullName] = props;
-            }
+            FieldInfo[] fieldInfos = FieldInfo.GetModelFieldInfos(typeof(T));
 
             while (reader.Read())
             {
                 T obj = Activator.CreateInstance<T>();
-                foreach (PropertyInfo prop in props)
+                foreach (FieldInfo field in fieldInfos)
                 {
-                    if (Equals(reader[prop.Name], DBNull.Value))
+                    if (Equals(reader[field.DbName], DBNull.Value))
                         continue;
-                    prop.SetValue(obj, reader[prop.Name]);
+                    field.Property.SetValue(obj, reader[field.DbName]);
                 }
                 res.Add(obj);
             }
