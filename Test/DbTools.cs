@@ -72,9 +72,9 @@ namespace Test
                 T obj = Activator.CreateInstance<T>();
                 foreach (FieldInfo field in fieldInfos)
                 {
-                    if (Equals(reader[field.DbName], DBNull.Value))
+                    if (Equals(reader[field.ColumnName], DBNull.Value))
                         continue;
-                    field.Property.SetValue(obj, reader[field.DbName]);
+                    field.Property.SetValue(obj, reader[field.ColumnName]);
                 }
                 res.Add(obj);
             }

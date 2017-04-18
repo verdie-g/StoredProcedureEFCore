@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 namespace Test
 {
     /// <summary>
-    /// Specify the name of the field in the database
+    /// Specify the column name in the database of the property
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public class FieldAttribute : Attribute
+    public class ColumnAttribute : Attribute
     {
-        public string DbName { get; private set; }
-        public FieldAttribute(string dbName)
+        public string ColumnName { get; private set; }
+        public ColumnAttribute(string columnName)
         {
-            DbName = dbName;
+            ColumnName = columnName;
         }
     }
 }

@@ -7,13 +7,13 @@ namespace Test.Dbo
 {
     public class ResultProc
     {
-        [Field("id")]
+        [Column("id")]
         public long Id { get; set; }
-        [Field("name")]
+        [Column("name")]
         public string Name { get; set; }
-        [Field("date")]
+        [Column("date")]
         public DateTime Date { get; set; }
-        [Field("active")]
+        [Column("active")]
         public bool Active { get; set; }
     }
 }
