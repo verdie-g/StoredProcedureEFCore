@@ -8,9 +8,9 @@ namespace Test
     public class StoredProcedureParameter
     {
         public string Name { get; set; }
-        public string Value { get; set; }
+        public object Value { get; set; }
 
-        public StoredProcedureParameter(string name, string value)
+        public StoredProcedureParameter(string name, object value)
         {
             Name = name;
             Value = value;

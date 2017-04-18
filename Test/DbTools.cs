@@ -26,7 +26,7 @@ namespace Test
             {
                 var param = command.CreateParameter();
                 param.ParameterName = "@" + parameter.Name;
-                param.Value = parameter.Value;
+                param.Value = parameter.Value.ToString();
                 command.Parameters.Add(param);
             }
             context.Database.OpenConnection();
