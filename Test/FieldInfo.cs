@@ -22,7 +22,7 @@ namespace Test
                 for (int i = 0; i < properties.Length; ++i)
                 {
                     FieldAttribute fieldAttribute = (FieldAttribute)properties[i].GetCustomAttribute(attributeType);
-                    res[i].DbName = fieldAttribute.DbName;
+                    res[i].DbName = (fieldAttribute is null) ? properties[i].Name : fieldAttribute.DbName;
                     res[i].Property = properties[i];
                 }
                 fieldInfos[modelType.FullName] = res;
