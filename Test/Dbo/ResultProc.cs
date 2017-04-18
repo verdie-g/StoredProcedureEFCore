@@ -12,6 +12,6 @@ namespace Test.Dbo
         public DateTime Date { get; set; }
         public bool Active { get; set; }
         [Column("name_with_underscore")]
-        public bool NameWithUnderscore { get; set; }
+        public int NameWithUnderscore { get; set; }
     }
 }
