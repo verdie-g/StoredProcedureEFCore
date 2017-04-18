@@ -3,65 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Data.Common;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
 namespace Test
 {
     public static class DbTools
     {
-        public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, Func<IDataReader, T> projection, params string[] parameters)
+        /// <summary>
+        /// Execute a stored procedure
+        /// </summary>
+        /// <typeparam name="T">Model</typeparam>
+        /// <param name="context"></param>
+        /// <param name="name">Procedure's name</param>
+        /// <param name="parameters">Procedure's parameters</param>
+        /// <returns>Enumeration of the result rows</returns>
+        public static IEnumerable<T> ExecuteStoredProcedure<T>(this DbContext context, string name, params StoredProcedureParameter[] parameters)
         {
-            var command = context.Database.GetDbConnection().CreateCommand();
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = name;
-            int cpt = 0;
-            foreach (var parameter in parameters)
-            {
-                var param = command.CreateParameter();
-                param.ParameterName = "@p"+cpt;
-                param.Value = parameter;
-                command.Parameters.Add(param);
-                cpt++;
-            }
-            context.Database.OpenConnection();
-            var res = command.ExecuteReader();
-            
-            return res.Select<T>(projection).ToList();
-        }
-
-
-        public static List<T> ExecuteStoredProcedure2<T>(this DbContext context, string name)
-        {
-
-            var command = context.Database.GetDbConnection().CreateCommand();
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = name;
-            context.Database.OpenConnection();
-            var res = command.ExecuteReader();
-
-            return DataReaderMapToList<T>(res);
-        }
-        
-        public static List<T> ExecuteStoredProcedure3<T>(this DbContext context, string name)
-        {
-
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = name;
+            foreach (var parameter in parameters)
+            {
+                var param = command.CreateParameter();
+                param.ParameterName = "@" + parameter.Name;
+                param.Value = parameter.Value;
+                command.Parameters.Add(param);
+            }
             context.Database.OpenConnection();
             IDataReader res = command.ExecuteReader();
-            return res.AutoMap<T>().ToList();
+            return res.AutoMap<T>();
         }
 
-        public static IEnumerable<T> Select<T>(this IDataReader reader, Func<IDataReader, T> projection)
-        {
-            while (reader.Read())
-            {
-                yield return projection(reader);
-            }
-        }
-
+        /// <summary>
+        /// Map a data reader to a model
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public static IEnumerable<T> AutoMap<T>(this IDataReader reader)
         {
             var res = new List<T>();
@@ -79,25 +57,6 @@ namespace Test
                 res.Add(obj);
             }
             return res;
-        }
-
-        private static List<T> DataReaderMapToList<T>(IDataReader dr)
-        {
-            List<T> list = new List<T>();
-            T obj = default(T);
-            while (dr.Read())
-            {
-                obj = Activator.CreateInstance<T>();
-                foreach (PropertyInfo prop in obj.GetType().GetProperties())
-                {
-                    if (!Equals(dr[prop.Name], DBNull.Value))
-                    {
-                        prop.SetValue(obj, dr[prop.Name]);
-                    }
-                }
-                list.Add(obj);
-            }
-            return list;
         }
     }
 }

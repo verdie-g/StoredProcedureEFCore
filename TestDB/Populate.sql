@@ -1,5 +1,7 @@
 ﻿DECLARE @i INT = 0;
 
+DELETE FROM Table_1;
+	
 WHILE @i < 30
 BEGIN
 	INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Quimm', '2015-08-13T21:08:28Z', 1, 0);
