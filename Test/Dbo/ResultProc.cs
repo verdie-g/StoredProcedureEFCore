@@ -7,13 +7,11 @@ namespace Test.Dbo
 {
     public class ResultProc
     {
-        [Column("id")]
         public long Id { get; set; }
-        [Column("name")]
         public string Name { get; set; }
-        [Column("date")]
         public DateTime Date { get; set; }
-        [Column("active")]
         public bool Active { get; set; }
+        [Column("name_with_underscore")]
+        public bool NameWithUnderscore { get; set; }
     }
 }

@@ -9,5 +9,6 @@ namespace Test.DataAccess
         public string Name { get; set; }
         public DateTime Date { get; set; }
         public bool Active { get; set; }
+        public int NameWithUnderscore { get; set; }
     }
 }

@@ -32,6 +32,10 @@ namespace Test.DataAccess
                     .IsRequired()
                     .HasColumnName("name")
                     .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.NameWithUnderscore)
+                    .HasColumnName("name_with_underscore")
+                    .HasDefaultValueSql("0");
             });
         }
     }
