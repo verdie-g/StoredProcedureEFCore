@@ -4,7 +4,7 @@
 -- Description:	
 -- =============================================
 CREATE PROCEDURE [dbo].[ListAll]
-	@p bigint = 0
+	@limit bigint = 9223372036854775807
 WITH RECOMPILE  
 AS
 BEGIN
@@ -16,5 +16,5 @@ BEGIN
 	--DBCC DROPCLEANBUFFERS
 
     -- Insert statements for procedure here
-	SELECT * FROM Table_1;
+	SELECT TOP(@limit) * FROM Table_1;
 END

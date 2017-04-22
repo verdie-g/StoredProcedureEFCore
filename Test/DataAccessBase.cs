@@ -9,7 +9,7 @@ namespace Test
         {
             using (DataAccess.TestContext ctx = new DataAccess.TestContext())
             {
-                return ctx.ExecuteStoredProcedure<Dbo.ResultProc>("[dbo].[ListAll]");
+                return ctx.ExecuteStoredProcedure<Dbo.ResultProc>("[dbo].[ListAll]", new StoredProcedureParameter("limit", 500));
             }
         }
     }
