@@ -1,4 +1,4 @@
- # How to call a stored procedure in an ASPT.NET core app
+ # How to call a stored procedure in an ASP.NET core app
 
 This code add a static method to *DbContext* named *ExecuteStoredProcedure*.
 The latter calls a stored procedure and maps the result into an enumerable of
