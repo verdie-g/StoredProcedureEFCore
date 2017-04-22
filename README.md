@@ -3,12 +3,14 @@
 This code add a static method to *DbContext* named *ExecuteStoredProcedure*.
 The latter calls a stored procedure and maps the result into an enumerable of
 the specified type.
-	
-	using (var context = new DataAccess.TestContext())
-    {
-		IEnumerable<ResultModel> res = context.ExecuteStoredProcedure<ResultModel>("[dbo].[StoredProcedureName]",
-			new StoredProcedureParameter("param_name", value));
-    }
+
+```csharp
+using (var context = new DataAccess.TestContext())
+{
+    IEnumerable<ResultModel> res = context.ExecuteStoredProcedure<ResultModel>("[dbo].[StoredProcedureName]",
+        new StoredProcedureParameter("param_name", value));
+}
+```
 
 If the field's DB column name contains underscores, the mapper will require a
 *Column* attribute over the C# property. This attribute is optionnal.
