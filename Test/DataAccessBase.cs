@@ -5,11 +5,11 @@ namespace Test
 {
     public class DataAccessBase
     {
-        public IEnumerable<Dbo.ResultProc> ListRowsFromTable1()
+        public IEnumerable<Dbo.ResultProc> ListRowsFromTable1(long limit)
         {
             using (DataAccess.TestContext ctx = new DataAccess.TestContext())
             {
-                return ctx.ExecuteStoredProcedure<Dbo.ResultProc>("[dbo].[ListAll]", new StoredProcedureParameter("limit", 500));
+                return ctx.ExecuteStoredProcedure<Dbo.ResultProc>("[dbo].[ListAll]", new StoredProcedureParameter("limit", limit));
             }
         }
     }

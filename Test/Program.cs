@@ -8,7 +8,7 @@ namespace Test
         public static void Main(string[] args)
         {
             var da = new DataAccessBase();
-            var rows = da.ListRowsFromTable1();
+            var rows = da.ListRowsFromTable1(500);
             Console.Read();
         }
     }
