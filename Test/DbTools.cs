@@ -75,11 +75,7 @@ namespace Test
             {
                 T obj = Activator.CreateInstance<T>();
                 foreach (FieldInfo field in fields)
-                {
-                    if (Equals(reader[field.ColumnName], DBNull.Value))
-                        continue;
                     field.Property.SetValue(obj, reader[field.ColumnName]);
-                }
                 res.Add(obj);
             }
             return res;
