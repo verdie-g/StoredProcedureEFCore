@@ -15,6 +15,10 @@ using (var context = new DataAccess.TestContext())
 If the field's DB column name contains underscores, the mapper will require a
 *Column* attribute over the C# property. This attribute is optionnal.
 
+During the mapping if a model property doesn't match with any column of the DataReader, the
+program will crash. If someone find a performant solution for this problem,
+tell me.
+
 Useful files are:
 - DataAccessBase.cs shows how to call a stored procedure
 - ColumnAttribute.cs is an attribute to specify the colmun name of property
