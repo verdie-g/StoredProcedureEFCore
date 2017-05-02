@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Test
 {
@@ -8,8 +9,8 @@ namespace Test
         public static void Main(string[] args)
         {
             var da = new DataAccessBase();
-            var rows = da.ListRowsFromTable1(500);
-            Console.Read();
+            IEnumerable<Dbo.ResultProc> rows = da.ListRowsFromTable1(500);
+            bool isSomething = da.IsSomething(true); 
         }
     }
 }

@@ -10,28 +10,54 @@ namespace Test
     public static class DbTools
     {
         /// <summary>
-        /// Execute a stored procedure
+        /// Call a stored procedure
         /// </summary>
-        /// <typeparam name="T">Model</typeparam>
+        /// <typeparam name="T">Type of the result object</typeparam>
         /// <param name="context"></param>
         /// <param name="name">Procedure's name</param>
         /// <param name="parameters">Procedure's parameters</param>
-        /// <returns>Enumeration of the result rows</returns>
-        public static IEnumerable<T> ExecuteStoredProcedure<T>(this DbContext context, string name, params StoredProcedureParameter[] parameters)
+        /// <returns></returns>
+        public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, params StoredProcedureParameter[] parameters)
+        {
+            using (IDataReader reader = context.CallStoredProcedure(name, parameters).ExecuteReader())
+            {
+                return reader.AutoMap<T>();
+            }
+        }
+
+        /// <summary>
+        /// Call a stored procedure that only return a boolean
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="name">Procedure's name</param>
+        /// <param name="parameters">Procedure's parameters</param>
+        /// <returns></returns>
+        public static bool ExecuteStoredProcedure(this DbContext context, string name, params StoredProcedureParameter[] parameters)
+        {
+            DbCommand command = context.CallStoredProcedure(name, parameters);
+            DbParameter returnParameter = command.CreateParameter();
+            returnParameter.ParameterName = "@out";
+            returnParameter.DbType = DbType.Boolean;
+            returnParameter.Direction = ParameterDirection.ReturnValue;
+            command.Parameters.Add(returnParameter);
+            command.ExecuteNonQuery();
+            return Convert.ToBoolean(returnParameter.Value);
+        }
+
+        private static DbCommand CallStoredProcedure(this DbContext context, string name, params StoredProcedureParameter[] parameters)
         {
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = name;
             foreach (var parameter in parameters)
             {
-                var param = command.CreateParameter();
-                param.ParameterName = "@" + parameter.Name;
-                param.Value = parameter.Value?.ToString();
+                DbParameter param = command.CreateParameter();
+                param.ParameterName = '@' + parameter.Name;
+                param.Value = parameter.Value;
                 command.Parameters.Add(param);
             }
             context.Database.OpenConnection();
-            IDataReader res = command.ExecuteReader();
-            return res.AutoMap<T>();
+            return command;
         }
 
         /// <summary>
@@ -40,16 +66,18 @@ namespace Test
         /// <typeparam name="T"></typeparam>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public static IEnumerable<T> AutoMap<T>(this IDataReader reader)
+        public static List<T> AutoMap<T>(this IDataReader reader)
         {
             var res = new List<T>();
-            FieldInfo[] fieldInfos = FieldInfo.GetModelFieldInfos(typeof(T));
+            FieldInfo[] fields = FieldInfo.GetModelFieldInfos(typeof(T));
 
             while (reader.Read())
             {
                 T obj = Activator.CreateInstance<T>();
-                foreach (FieldInfo field in fieldInfos)
+                foreach (FieldInfo field in fields)
                 {
+                    if (Equals(reader[field.ColumnName], DBNull.Value))
+                        continue;
                     field.Property.SetValue(obj, reader[field.ColumnName]);
                 }
                 res.Add(obj);

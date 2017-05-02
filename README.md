@@ -2,7 +2,8 @@
 
 This code add a static method to *DbContext* named *ExecuteStoredProcedure*.
 The latter calls a stored procedure and maps the result into an enumerable of
-the specified type.
+the specified type. If the model type is not specified, it will return a
+boolean gotten from the SQL Server return statement.
 
 ```csharp
 using (var context = new DataAccess.TestContext())
@@ -14,10 +15,6 @@ using (var context = new DataAccess.TestContext())
 
 If the field's DB column name contains underscores, the mapper will require a
 *Column* attribute over the C# property. This attribute is optionnal.
-
-During the mapping if a model property doesn't match with any column of the DataReader, the
-program will crash. If someone find a performant solution for this problem,
-tell me.
 
 Useful files are:
 - DataAccessBase.cs shows how to call a stored procedure
