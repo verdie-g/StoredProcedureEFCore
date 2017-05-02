@@ -64,6 +64,7 @@
   <ItemGroup>
     <Build Include="dbo\Tables\Table_1.sql" />
     <Build Include="dbo\Stored Procedures\ListAll.sql" />
+    <Build Include="dbo\Stored Procedures\ReturnBoolean.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Populate.sql" />
