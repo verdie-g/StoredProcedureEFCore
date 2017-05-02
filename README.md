@@ -22,3 +22,9 @@ Useful files are:
 - StoredProcedureParameter.cs is a model to add parameters to a procedure
 - DbTools.cs contains the method *ExecuteStoredProcedure* and *AutoMap*
 - FieldInfo.cs is a model to cache property informations
+
+## Why ?
+
+This repository was made in response of the following Entity Framework's issues : 
+- [Raw store access APIs: Support for ad hoc mapping of arbitrary types #1862](https://github.com/aspnet/EntityFramework/issues/1862)
+- [Stored procedure mapping support #245](https://github.com/aspnet/EntityFramework/issues/245)
