@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Test
 {
     /// <summary>
-    /// Informartions of a field
+    /// Informations of a field
     /// </summary>
     public class FieldInfo
     {
