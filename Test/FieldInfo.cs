@@ -39,7 +39,7 @@ namespace Test
                 for (int i = 0; i < properties.Length; ++i)
                 {
                     ColumnAttribute fieldAttribute = (ColumnAttribute)properties[i].GetCustomAttribute(attributeType);
-                    res[i].ColumnName = (fieldAttribute is null) ? properties[i].Name : fieldAttribute.ColumnName;
+                    res[i].ColumnName = (fieldAttribute is null) ? properties[i].Name.ToLower() : fieldAttribute.ColumnName;
                     res[i].Property = properties[i];
                 }
                 fieldInfos[modelType.FullName] = res;
