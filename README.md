@@ -13,16 +13,10 @@ using (var context = new DataAccess.TestContext())
 }
 ```
 
-If the field's DB column name contains underscores, the mapper will require a
-*Column* attribute over the C# property. This attribute is optionnal.
-
 Useful files are:
 - DataAccessBase.cs shows how to call a stored procedure
-- ColumnAttribute.cs is an attribute to specify the colmun name of property
-  in the database
 - StoredProcedureParameter.cs is a model to add parameters to a procedure
 - DbTools.cs contains the method *ExecuteStoredProcedure* and *AutoMap*
-- FieldInfo.cs is a model to cache property informations
 
 ## Why ?
 
