@@ -16,5 +16,5 @@ BEGIN
 	--DBCC DROPCLEANBUFFERS
 
     -- Insert statements for procedure here
-	SELECT TOP(@limit) * FROM Table_1;
+	SELECT TOP(@limit) *, 5 AS extra_column FROM Table_1;
 END

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Test
 {
@@ -66,19 +66,42 @@ namespace Test
         /// <typeparam name="T"></typeparam>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public static List<T> AutoMap<T>(this IDataReader reader)
+        private static List<T> AutoMap<T>(this IDataReader reader)
         {
             var res = new List<T>();
-            FieldInfo[] fields = FieldInfo.GetModelFieldInfos(typeof(T));
-
+            Dictionary<string, PropertyInfo> props = reader.GetColumnsPropertyInfos<T>();
             while (reader.Read())
             {
-                T obj = Activator.CreateInstance<T>();
-                foreach (FieldInfo field in fields)
-                    field.Property.SetValue(obj, reader[field.ColumnName]);
-                res.Add(obj);
+                T row = Activator.CreateInstance<T>();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string name = reader.GetName(i);
+                    if (props.TryGetValue(name, out PropertyInfo prop))
+                    {
+                        prop.SetValue(row, reader.GetValue(i));
+                    }
+                } 
+                res.Add(row);
             }
             return res;
         }
+
+        private static Dictionary<string, PropertyInfo> GetColumnsPropertyInfos<T>(this IDataReader reader)
+        {
+            var res = new Dictionary<string, PropertyInfo>(reader.FieldCount);
+            Type modelType = typeof(T);
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                string name = reader.GetName(i);
+                string nameNoUnderscore = name.Replace("_", "").Replace("-", "");
+                PropertyInfo prop = modelType.GetProperty(nameNoUnderscore, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                if (prop != null)
+                {
+                    res[name] = prop;
+                }
+            }
+            return res;
+        }
+
     }
 }
