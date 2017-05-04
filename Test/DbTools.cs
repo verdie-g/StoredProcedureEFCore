@@ -78,7 +78,8 @@ namespace Test
                     string name = reader.GetName(i);
                     if (props.TryGetValue(name, out PropertyInfo prop))
                     {
-                        prop.SetValue(row, reader.GetValue(i));
+                        object value = reader.GetValue(i);
+                        prop.SetValue(row, value == DBNull.Value ? null : value);
                     }
                 } 
                 res.Add(row);
