@@ -13,7 +13,7 @@ namespace StoredProcedure
         {
             using (DataAccess.TestContext ctx = new DataAccess.TestContext())
             {
-                return ctx.ExecuteStoredProcedure<Dbo.ResultProc>("[dbo].[ListAll]", new StoredProcedureParameter("limit", limit));
+                return ctx.ExecuteStoredProcedure<Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
             }
         }
 
@@ -26,7 +26,7 @@ namespace StoredProcedure
         {
             using (DataAccess.TestContext ctx = new DataAccess.TestContext())
             {
-                return ctx.ExecuteStoredProcedure("[dbo].[ReturnBoolean]", new StoredProcedureParameter("boolean_to_return", boolToReturn));
+                return ctx.ExecuteStoredProcedure("[dbo].[ReturnBoolean]", ("boolean_to_return", boolToReturn));
             }
         }
     }

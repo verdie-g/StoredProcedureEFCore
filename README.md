@@ -8,14 +8,12 @@ boolean gotten from the SQL Server return statement.
 ```csharp
 using (var context = new DataAccess.TestContext())
 {
-    IEnumerable<ResultModel> res = context.ExecuteStoredProcedure<ResultModel>("[dbo].[StoredProcedureName]",
-        new StoredProcedureParameter("param_name", value));
+    IEnumerable<ResultModel> res = context.ExecuteStoredProcedure<ResultModel>("[dbo].[StoredProcedureName]", ("param_name", value));
 }
 ```
 
 Useful files are:
 - DataAccessBase.cs shows how to call a stored procedure
-- StoredProcedureParameter.cs is a model to add parameters to a procedure
 - DbTools.cs contains the method *ExecuteStoredProcedure* and *AutoMap*
 
 ## Why ?

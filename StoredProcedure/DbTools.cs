@@ -17,7 +17,7 @@ namespace StoredProcedure
         /// <param name="name">Procedure's name</param>
         /// <param name="parameters">Procedure's parameters</param>
         /// <returns></returns>
-        public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, params StoredProcedureParameter[] parameters)
+        public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, params (string, object)[] parameters)
         {
             using (IDataReader reader = context.CallStoredProcedure(name, parameters).ExecuteReader())
             {
@@ -32,7 +32,7 @@ namespace StoredProcedure
         /// <param name="name">Procedure's name</param>
         /// <param name="parameters">Procedure's parameters</param>
         /// <returns></returns>
-        public static bool ExecuteStoredProcedure(this DbContext context, string name, params StoredProcedureParameter[] parameters)
+        public static bool ExecuteStoredProcedure(this DbContext context, string name, params (string, object)[] parameters)
         {
             DbCommand command = context.CallStoredProcedure(name, parameters);
             DbParameter returnParameter = command.CreateParameter();
@@ -44,7 +44,7 @@ namespace StoredProcedure
             return Convert.ToBoolean(returnParameter.Value);
         }
 
-        private static DbCommand CallStoredProcedure(this DbContext context, string name, params StoredProcedureParameter[] parameters)
+        private static DbCommand CallStoredProcedure(this DbContext context, string name, params (string name, object value)[] parameters)
         {
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
@@ -52,8 +52,8 @@ namespace StoredProcedure
             foreach (var parameter in parameters)
             {
                 DbParameter param = command.CreateParameter();
-                param.ParameterName = '@' + parameter.Name;
-                param.Value = parameter.Value;
+                param.ParameterName = '@' + parameter.name;
+                param.Value = parameter.value;
                 command.Parameters.Add(param);
             }
             context.Database.OpenConnection();
