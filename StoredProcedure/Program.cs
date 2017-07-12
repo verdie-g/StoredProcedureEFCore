@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace StoredProcedure
 {
@@ -6,9 +8,15 @@ namespace StoredProcedure
     {
         public static void Main(string[] args)
         {
+            int count = 500;
             var da = new DataAccessBase();
-            IEnumerable<Dbo.ResultProc> rows = da.ListRowsFromTable1(500);
-            bool isSomething = da.IsSomething(true); 
+            List<Dbo.ResultProc> rows = da.ListRowsFromTable1(count).ToList();
+            Debug.Assert(rows.Count == 500);
+            Debug.Assert(rows[0].ExtraProperty == null);
+            Debug.Assert(rows[0].Name != null);
+            Debug.Assert(rows[0].Date != null);
+            Debug.Assert(da.IsSomething(true));
+            Debug.Assert(!da.IsSomething(false));
         }
     }
 }
