@@ -1,4 +1,4 @@
-﻿namespace Test
+﻿namespace StoredProcedure
 {
     public class StoredProcedureParameter
     {

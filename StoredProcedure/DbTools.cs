@@ -5,7 +5,7 @@ using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace Test
+namespace StoredProcedure
 {
     public static class DbTools
     {

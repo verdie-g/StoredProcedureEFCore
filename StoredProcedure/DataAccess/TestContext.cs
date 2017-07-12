@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Test.DataAccess
+namespace StoredProcedure.DataAccess
 {
     public partial class TestContext : DbContext
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Test.DataAccess
+namespace StoredProcedure.DataAccess
 {
     public partial class Table1
     {

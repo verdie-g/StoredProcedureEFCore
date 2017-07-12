@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Test.Dbo
+namespace StoredProcedure.Dbo
 {
     public class ResultProc
     {
