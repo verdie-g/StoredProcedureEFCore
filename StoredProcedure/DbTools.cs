@@ -19,9 +19,9 @@ namespace StoredProcedure
         /// <returns></returns>
         public static List<T> ExecuteStoredProcedure<T>(this DbContext context, string name, params (string, object)[] parameters)
         {
-            using (IDataReader reader = context.CallStoredProcedure(name, parameters).ExecuteReader())
+            using (IDataReader reader = CreateDbCommand(context, name, parameters).ExecuteReader())
             {
-                return reader.AutoMap<T>();
+                return MapReaderToModel<T>(reader);
             }
         }
 
@@ -34,7 +34,7 @@ namespace StoredProcedure
         /// <returns></returns>
         public static bool ExecuteStoredProcedure(this DbContext context, string name, params (string, object)[] parameters)
         {
-            DbCommand command = context.CallStoredProcedure(name, parameters);
+            DbCommand command = CreateDbCommand(context, name, parameters);
             DbParameter returnParameter = command.CreateParameter();
             returnParameter.ParameterName = "@out";
             returnParameter.DbType = DbType.Boolean;
@@ -44,7 +44,7 @@ namespace StoredProcedure
             return Convert.ToBoolean(returnParameter.Value);
         }
 
-        private static DbCommand CallStoredProcedure(this DbContext context, string name, params (string name, object value)[] parameters)
+        private static DbCommand CreateDbCommand(DbContext context, string name, params (string name, object value)[] parameters)
         {
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
@@ -63,13 +63,13 @@ namespace StoredProcedure
         /// <summary>
         /// Map a data reader to a model
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Model</typeparam>
         /// <param name="reader"></param>
         /// <returns></returns>
-        private static List<T> AutoMap<T>(this IDataReader reader)
+        private static List<T> MapReaderToModel<T>(IDataReader reader)
         {
             var res = new List<T>();
-            Dictionary<string, PropertyInfo> props = reader.GetColumnsPropertyInfos<T>();
+            Dictionary<string, PropertyInfo> props = GetDataReaderColumns<T>(reader);
             while (reader.Read())
             {
                 T row = Activator.CreateInstance<T>();
@@ -87,7 +87,7 @@ namespace StoredProcedure
             return res;
         }
 
-        private static Dictionary<string, PropertyInfo> GetColumnsPropertyInfos<T>(this IDataReader reader)
+        private static Dictionary<string, PropertyInfo> GetDataReaderColumns<T>(IDataReader reader)
         {
             var res = new Dictionary<string, PropertyInfo>(reader.FieldCount);
             Type modelType = typeof(T);
