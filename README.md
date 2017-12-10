@@ -14,7 +14,7 @@ using (var context = new DataAccess.TestContext())
 
 Useful files are:
 - DataAccessBase.cs shows how to call a stored procedure
-- DbTools.cs contains the method *Exec* and *AutoMap*
+- DbTools.cs contains the method *Exec* and *ToList*
 
 ## Why ?
 
