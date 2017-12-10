@@ -1,20 +1,20 @@
  # How to call a stored procedure in an ASP.NET core app
 
-This code add a static method to *DbContext* named *ExecuteStoredProcedure*.
-The latter calls a stored procedure and maps the result into an enumerable of
+This code add a static method to *DbContext* named *Exec*.
+The latter calls a stored procedure and maps the result into a list of
 the specified type. If the model type is not specified, it will return a
 boolean gotten from the SQL Server return statement.
 
 ```csharp
 using (var context = new DataAccess.TestContext())
 {
-    IEnumerable<ResultModel> res = context.ExecuteStoredProcedure<ResultModel>("[dbo].[StoredProcedureName]", ("param_name", value));
+  List<ResultModel> res = context.Exec<ResultModel>("[dbo].[StoredProcedureName]", ("param_name", value));
 }
 ```
 
 Useful files are:
 - DataAccessBase.cs shows how to call a stored procedure
-- DbTools.cs contains the method *ExecuteStoredProcedure* and *AutoMap*
+- DbTools.cs contains the method *Exec* and *AutoMap*
 
 ## Why ?
 

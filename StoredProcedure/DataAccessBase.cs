@@ -2,32 +2,32 @@
 
 namespace StoredProcedure
 {
-    public class DataAccessBase
+  public class DataAccessBase
+  {
+    /// <summary>
+    /// Stored procedure that list, with a limit, the Table1's rows
+    /// </summary>
+    /// <param name="limit">Rows limit</param>
+    /// <returns></returns>
+    public List<Dbo.ResultProc> ListRowsFromTable1(long limit)
     {
-        /// <summary>
-        /// Stored procedure that list, with a limit, the Table1's rows
-        /// </summary>
-        /// <param name="limit">Rows limit</param>
-        /// <returns></returns>
-        public IEnumerable<Dbo.ResultProc> ListRowsFromTable1(long limit)
-        {
-            using (DataAccess.TestContext ctx = new DataAccess.TestContext())
-            {
-                return ctx.ExecuteStoredProcedure<Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
-            }
-        }
-
-        /// <summary>
-        /// Stored procedure that return the parameter
-        /// </summary>
-        /// <param name="boolToReturn"></param>
-        /// <returns></returns>
-        public bool IsSomething(bool boolToReturn)
-        {
-            using (DataAccess.TestContext ctx = new DataAccess.TestContext())
-            {
-                return ctx.ExecuteStoredProcedure("[dbo].[ReturnBoolean]", ("boolean_to_return", boolToReturn));
-            }
-        }
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.Exec<Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+      }
     }
+
+    /// <summary>
+    /// Stored procedure that return the parameter
+    /// </summary>
+    /// <param name="boolToReturn"></param>
+    /// <returns></returns>
+    public bool IsSomething(bool boolToReturn)
+    {
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.Exec("[dbo].[ReturnBoolean]", ("boolean_to_return", boolToReturn));
+      }
+    }
+  }
 }
