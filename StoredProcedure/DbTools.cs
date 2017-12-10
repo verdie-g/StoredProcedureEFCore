@@ -19,14 +19,15 @@ namespace StoredProcedure
     /// <returns></returns>
     public static List<T> Exec<T>(this DbContext ctx, string name, params (string, object)[] parameters)
     {
-      using (IDataReader reader = CreateDbCommand(ctx, name, parameters).ExecuteReader())
+      DbCommand cmd = CreateDbCommand(ctx, name, parameters);
+      using (IDataReader reader = cmd.ExecuteReader())
       {
         return reader.ToList<T>();
       }
     }
 
     /// <summary>
-    /// Execute a stored procedure and the first row of the first column
+    /// Execute a stored procedure and return the first row of the first column
     /// </summary>
     /// <typeparam name="T">Type of the result object</typeparam>
     /// <param name="ctx"></param>
@@ -37,6 +38,23 @@ namespace StoredProcedure
     {
       DbCommand cmd = CreateDbCommand(ctx, name, parameters);
       return (T)cmd.ExecuteScalar();
+    }
+
+    /// <summary>
+    /// Execute a stored procedure and return the first row
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ctx"></param>
+    /// <param name="name"></param>
+    /// <param name="parameters"></param>
+    /// <returns></returns>
+    public static T ExecFirst<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    {
+      DbCommand cmd = CreateDbCommand(ctx, name, parameters);
+      using (IDataReader reader = cmd.ExecuteReader())
+      {
+        return reader.First<T>();
+      }
     }
 
     /// <summary>
@@ -90,6 +108,19 @@ namespace StoredProcedure
         res.Add(row);
       }
       return res;
+    }
+
+    /// <summary>
+    /// Map reader's first row to a model
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    private static T First<T>(this IDataReader reader)
+    {
+      Dictionary<string, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+      reader.Read();
+      return MapNextRow<T>(reader, props);
     }
 
     private static T MapNextRow<T>(IDataReader reader, Dictionary<string, PropertyInfo> props)
