@@ -86,19 +86,25 @@ namespace StoredProcedure
       Dictionary<string, PropertyInfo> props = GetDataReaderColumns<T>(reader);
       while (reader.Read())
       {
-        T row = Activator.CreateInstance<T>();
-        for (int i = 0; i < reader.FieldCount; i++)
-        {
-          string name = reader.GetName(i);
-          if (props.TryGetValue(name, out PropertyInfo prop))
-          {
-            object value = reader.GetValue(i);
-            prop.SetValue(row, value == DBNull.Value ? null : value);
-          }
-        }
+        T row = MapNextRow<T>(reader, props);
         res.Add(row);
       }
       return res;
+    }
+
+    private static T MapNextRow<T>(IDataReader reader, Dictionary<string, PropertyInfo> props)
+    {
+      T row = Activator.CreateInstance<T>();
+      for (int i = 0; i < reader.FieldCount; i++)
+      {
+        string name = reader.GetName(i);
+        if (props.TryGetValue(name, out PropertyInfo prop))
+        {
+          object value = reader.GetValue(i);
+          prop.SetValue(row, value == DBNull.Value ? null : value);
+        }
+      }
+      return row;
     }
 
     private static Dictionary<string, PropertyInfo> GetDataReaderColumns<T>(IDataReader reader)
