@@ -10,7 +10,7 @@ namespace StoredProcedure
   public static class DbTools
   {
     /// <summary>
-    /// Call a stored procedure
+    /// Execute a stored procedure
     /// </summary>
     /// <typeparam name="T">Type of the result object</typeparam>
     /// <param name="ctx"></param>
@@ -26,7 +26,21 @@ namespace StoredProcedure
     }
 
     /// <summary>
-    /// Call a stored procedure that only return a boolean
+    /// Execute a stored procedure and the first row of the first column
+    /// </summary>
+    /// <typeparam name="T">Type of the result object</typeparam>
+    /// <param name="ctx"></param>
+    /// <param name="name">Procedure's name</param>
+    /// <param name="parameters">Procedure's parameters</param>
+    /// <returns></returns>
+    public static T ExecScalar<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    {
+      DbCommand cmd = CreateDbCommand(ctx, name, parameters);
+      return (T)cmd.ExecuteScalar();
+    }
+
+    /// <summary>
+    /// Execute a stored procedure that only return a boolean
     /// </summary>
     /// <param name="ctx"></param>
     /// <param name="name">Procedure's name</param>

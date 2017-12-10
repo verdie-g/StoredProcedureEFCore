@@ -17,6 +17,14 @@ namespace StoredProcedure
       }
     }
 
+    public long FirstId()
+    {
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.ExecScalar<long>("[dbo].[ListAll]");
+      }
+    }
+
     /// <summary>
     /// Stored procedure that return the parameter
     /// </summary>
