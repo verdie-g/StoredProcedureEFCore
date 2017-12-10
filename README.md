@@ -5,6 +5,12 @@ The latter calls a stored procedure and maps the result into a list of
 the specified type. If the model type is not specified, it will return a
 boolean gotten from the SQL Server return statement.
 
+The *Exec* method handles :
+- Extra column in result set
+- Extra property in model
+- Null values in result set
+- Underscores or hypens in result set column names ("column_name" is mapped to ColumnName property)
+
 ```csharp
 using (var context = new DataAccess.TestContext())
 {
