@@ -12,9 +12,9 @@ using (var context = new DataAccess.TestContext())
 }
 ```
 
-Useful files are:
-- DataAccessBase.cs shows how to call a stored procedure
-- DbTools.cs contains the method *Exec* and *ToList*
+Interesting files are:
+- [DbContextExtension.cs](https://github.com/verdie-g/StoredProcedureDotNetCore/blob/master/StoredProcedure/Extensions/DbContextExtension.cs)
+- [IDataReaderExtension.cs](https://github.com/verdie-g/StoredProcedureDotNetCore/blob/master/StoredProcedure/Extensions/IDataReaderExtension.cs)
 
 ## Why ?
 

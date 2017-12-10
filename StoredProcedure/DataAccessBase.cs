@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using StoredProcedure.Extensions;
+using System.Collections.Generic;
 
 namespace StoredProcedure
 {
