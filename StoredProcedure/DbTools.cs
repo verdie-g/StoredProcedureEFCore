@@ -21,7 +21,7 @@ namespace StoredProcedure
     {
       using (IDataReader reader = CreateDbCommand(context, name, parameters).ExecuteReader())
       {
-        return MapReaderToModel<T>(reader);
+        return reader.ToList<T>();
       }
     }
 
@@ -61,12 +61,12 @@ namespace StoredProcedure
     }
 
     /// <summary>
-    /// Map a data reader to a model
+    /// Map reader to a model list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    private static List<T> MapReaderToModel<T>(IDataReader reader)
+    private static List<T> ToList<T>(this IDataReader reader)
     {
       var res = new List<T>();
       Dictionary<string, PropertyInfo> props = GetDataReaderColumns<T>(reader);
