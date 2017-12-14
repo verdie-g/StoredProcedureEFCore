@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace StoredProcedure.Extensions
 {
@@ -60,7 +61,7 @@ namespace StoredProcedure.Extensions
       for (int i = 0; i < reader.FieldCount; i++)
       {
         string name = reader.GetName(i);
-        string nameNoUnderscore = name.Replace("_", "").Replace("-", "");
+        string nameNoUnderscore = Regex.Replace(name, "[_-]", "");
         PropertyInfo prop = modelType.GetProperty(nameNoUnderscore, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
         if (prop != null)
         {
