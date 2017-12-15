@@ -22,6 +22,25 @@ Interesting files are:
 - [DbContextExtension.cs](https://github.com/verdie-g/StoredProcedureDotNetCore/blob/master/StoredProcedure/Extensions/DbContextExtension.cs)
 - [IDataReaderExtension.cs](https://github.com/verdie-g/StoredProcedureDotNetCore/blob/master/StoredProcedure/Extensions/IDataReaderExtension.cs)
 
+## API
+
+### DbContext
+```csharp
+List<T> DbContext.Exec<T>(string name, params (string, object)[] parameters)
+T DbContext.ExecScalar<T>(string name, params (string, object)[] parameters)
+T DbContext.ExecFirst<T>(string name, params (string, object)[] parameters)
+T DbContext.ExecFirstOrDefault<T>(string name, params (string, object)[] parameters)
+T DbContext.ExecSingle<T>(string name, params (string, object)[] parameters)
+```
+
+### IDataReader
+```csharp
+List<T> IDataReader.ToList<T>()
+T IDataReader.First<T>()
+T IDataReader.FirstOrDefault<T>()
+T IDataReader.Single<T>()
+```
+
 ## Why ?
 
 This repository was made in response of the following Entity Framework's issues : 
