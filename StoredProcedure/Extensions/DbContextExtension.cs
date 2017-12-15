@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 
 namespace StoredProcedure.Extensions
 {
@@ -17,7 +16,7 @@ namespace StoredProcedure.Extensions
     /// <param name="name">Procedure's name</param>
     /// <param name="parameters">Procedure's parameters</param>
     /// <returns></returns>
-    public static List<T> Exec<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    public static List<T> Exec<T>(this DbContext ctx, string name, params (string, object)[] parameters) where T : class
     {
       using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
       {
@@ -36,7 +35,7 @@ namespace StoredProcedure.Extensions
     /// <param name="name">Procedure's name</param>
     /// <param name="parameters">Procedure's parameters</param>
     /// <returns></returns>
-    public static T ExecScalar<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    public static T ExecScalar<T>(this DbContext ctx, string name, params (string, object)[] parameters) where T : IComparable
     {
       using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
       {
@@ -52,7 +51,7 @@ namespace StoredProcedure.Extensions
     /// <param name="name">Procedure's name</param>
     /// <param name="parameters">Procedure's parameters</param>
     /// <returns></returns>
-    public static T ExecFirst<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    public static T ExecFirst<T>(this DbContext ctx, string name, params (string, object)[] parameters) where T : class
     {
       using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
       {
@@ -72,7 +71,7 @@ namespace StoredProcedure.Extensions
     /// <param name="name">Procedure's name</param>
     /// <param name="parameters">Procedure's parameters</param>
     /// <returns></returns>
-    public static T ExecFirstOrDefault<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    public static T ExecFirstOrDefault<T>(this DbContext ctx, string name, params (string, object)[] parameters) where T : class
     {
       using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
       {
@@ -91,7 +90,7 @@ namespace StoredProcedure.Extensions
     /// <param name="name">Procedure's name</param>
     /// <param name="parameters">Procedure's parameters</param>
     /// <returns></returns>
-    public static T ExecSingle<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    public static T ExecSingle<T>(this DbContext ctx, string name, params (string, object)[] parameters) where T : class
     {
       using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
       {

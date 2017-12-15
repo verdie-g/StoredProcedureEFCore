@@ -14,7 +14,7 @@ namespace StoredProcedure.Extensions
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static List<T> ToList<T>(this IDataReader reader)
+    public static List<T> ToList<T>(this IDataReader reader) where T : class
     {
       var res = new List<T>();
       Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
@@ -32,7 +32,7 @@ namespace StoredProcedure.Extensions
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static T First<T>(this IDataReader reader)
+    public static T First<T>(this IDataReader reader) where T : class
     {
       return First<T>(reader, false, false);
     }
@@ -43,7 +43,7 @@ namespace StoredProcedure.Extensions
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static T FirstOrDefault<T>(this IDataReader reader)
+    public static T FirstOrDefault<T>(this IDataReader reader) where T : class
     {
       return First<T>(reader, true, false);
     }
@@ -54,12 +54,12 @@ namespace StoredProcedure.Extensions
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static T Single<T>(this IDataReader reader)
+    public static T Single<T>(this IDataReader reader) where T : class
     {
       return First<T>(reader, false, true);
     }
 
-    private static T First<T>(IDataReader reader, bool orDefault, bool throwIfNotSingle)
+    private static T First<T>(IDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class
     {
       if (orDefault && throwIfNotSingle)
         throw new ArgumentException("orDefault and throwIfNotSingle booleans can't be both true.");
@@ -83,7 +83,7 @@ namespace StoredProcedure.Extensions
       }
     }
 
-    private static T MapNextRow<T>(IDataReader reader, Dictionary<int, PropertyInfo> props)
+    private static T MapNextRow<T>(IDataReader reader, Dictionary<int, PropertyInfo> props) where T : class
     {
       T row = Activator.CreateInstance<T>();
       for (int i = 0; i < reader.FieldCount; i++)
