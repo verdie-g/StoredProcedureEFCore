@@ -34,6 +34,14 @@ namespace StoredProcedure
       }
     }
 
+    public Dbo.ResultProc SingleRow(long limit)
+    {
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.ExecSingle<Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+      }
+    }
+
     /// <summary>
     /// Stored procedure that return the parameter
     /// </summary>

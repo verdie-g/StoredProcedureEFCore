@@ -34,9 +34,53 @@ namespace StoredProcedure.Extensions
     /// <returns></returns>
     public static T First<T>(this IDataReader reader)
     {
-      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
-      reader.Read();
-      return MapNextRow<T>(reader, props);
+      return First<T>(reader, false, false);
+    }
+
+    /// <summary>
+    /// Map reader's first row to a model or return default value if the result set is empty
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static T FirstOrDefault<T>(this IDataReader reader)
+    {
+      return First<T>(reader, true, false);
+    }
+
+    /// <summary>
+    /// Map reader's first row to a model or throw an exception if result set contains more than one row
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static T Single<T>(this IDataReader reader)
+    {
+      return First<T>(reader, false, true);
+    }
+
+    private static T First<T>(IDataReader reader, bool orDefault, bool throwIfNotSingle)
+    {
+      if (orDefault && throwIfNotSingle)
+        throw new ArgumentException("orDefault and throwIfNotSingle booleans can't be both true.");
+
+      if (reader.Read())
+      {
+        Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+        T row = MapNextRow<T>(reader, props);
+
+        if (throwIfNotSingle && reader.Read())
+          throw new Exception("Result set contains more than one row.");
+
+        return row;
+      }
+      else
+      {
+        if (orDefault)
+          return default(T);
+
+        throw new Exception("Empty result set.");
+      }
     }
 
     private static T MapNextRow<T>(IDataReader reader, Dictionary<int, PropertyInfo> props)

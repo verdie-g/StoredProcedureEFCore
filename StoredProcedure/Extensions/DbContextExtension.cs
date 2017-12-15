@@ -47,10 +47,10 @@ namespace StoredProcedure.Extensions
     /// <summary>
     /// Execute a stored procedure and return the first row
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of the result object</typeparam>
     /// <param name="ctx"></param>
-    /// <param name="name"></param>
-    /// <param name="parameters"></param>
+    /// <param name="name">Procedure's name</param>
+    /// <param name="parameters">Procedure's parameters</param>
     /// <returns></returns>
     public static T ExecFirst<T>(this DbContext ctx, string name, params (string, object)[] parameters)
     {
@@ -59,6 +59,45 @@ namespace StoredProcedure.Extensions
         using (IDataReader reader = cmd.ExecuteReader())
         {
           return reader.First<T>();
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Execute a stored procedure and return the first row or default value if the result set is empty
+    /// </summary>
+    /// <typeparam name="T">Type of the result object</typeparam>
+    /// <param name="ctx"></param>
+    /// <param name="name">Procedure's name</param>
+    /// <param name="parameters">Procedure's parameters</param>
+    /// <returns></returns>
+    public static T ExecFirstOrDefault<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    {
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
+      {
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.FirstOrDefault<T>();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Execute a stored procedure and return the first row or throw an exception if result set contains more than one row
+    /// </summary>
+    /// <typeparam name="T">Type of the result object</typeparam>
+    /// <param name="ctx"></param>
+    /// <param name="name">Procedure's name</param>
+    /// <param name="parameters">Procedure's parameters</param>
+    /// <returns></returns>
+    public static T ExecSingle<T>(this DbContext ctx, string name, params (string, object)[] parameters)
+    {
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
+      {
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.Single<T>();
         }
       }
     }
