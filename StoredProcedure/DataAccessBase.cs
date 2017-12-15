@@ -50,6 +50,15 @@ namespace StoredProcedure
       }
     }
 
+    public Dictionary<long, Dbo.ResultProc> Dictionary(long limit)
+    {
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.ExecDictionary<long, Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+      }
+    }
+
+
     /// <summary>
     /// Stored procedure that return the parameter
     /// </summary>

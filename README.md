@@ -31,6 +31,7 @@ T DbContext.ExecScalar<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecFirst<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecFirstOrDefault<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecSingle<T>(string name, params (string, object)[] parameters)
+Dictionary<TKey, TValue> DbContext.ExecDictionary<TKey, TValue>(string name, params (string, object)[] parameters)
 ```
 
 ### IDataReader
@@ -39,6 +40,7 @@ List<T> IDataReader.ToList<T>()
 T IDataReader.First<T>()
 T IDataReader.FirstOrDefault<T>()
 T IDataReader.Single<T>()
+Dictionary<TKey, TValue> IDataReader.Dictionary<TKey, TValue>(this IDataReader reader)
 ```
 
 ## Why ?

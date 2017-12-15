@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace StoredProcedure
 {
@@ -68,6 +69,11 @@ namespace StoredProcedure
       column = da.Column(10);
       Debug.Assert(column.Count == 10);
       Debug.Assert(column[0] != 0);
+
+      Dictionary<long, Dbo.ResultProc> dic = da.Dictionary(100);
+      Debug.Assert(dic.Count == 100);
+      CheckRow(dic.First().Value);
+      Debug.Assert(dic.First().Value.Id != 0);
     }
 
     private static void CheckRow(Dbo.ResultProc row)

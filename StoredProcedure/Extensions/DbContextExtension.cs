@@ -121,6 +121,26 @@ namespace StoredProcedure.Extensions
     }
 
     /// <summary>
+    /// Execute a stored procedure and create a dictionary with the result set. Keys must be unique
+    /// </summary>
+    /// <typeparam name="TKey">Type of the keys</typeparam>
+    /// <typeparam name="TValue">Type of the values</typeparam>
+    /// <param name="ctx"></param>
+    /// <param name="name">Procedure's name</param>
+    /// <param name="parameters">Procedure's parameters</param>
+    /// <returns></returns>
+    public static Dictionary<TKey, TValue> ExecDictionary<TKey, TValue>(this DbContext ctx, string name, params (string, object)[] parameters) where TKey : IComparable where TValue : class
+    {
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
+      {
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.Dictionary<TKey, TValue>();
+        }
+      }
+    }
+
+    /// <summary>
     /// Execute a stored procedure that only return a boolean
     /// </summary>
     /// <param name="ctx"></param>

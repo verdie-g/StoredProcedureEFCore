@@ -44,6 +44,28 @@ namespace StoredProcedure.Extensions
     }
 
     /// <summary>
+    /// Create a dictionary using the first column as a key
+    /// </summary>
+    /// <typeparam name="TKey">Type of the keys</typeparam>
+    /// <typeparam name="TValue">Type of the values</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static Dictionary<TKey, TValue> Dictionary<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
+    {
+      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<TValue>(reader);
+
+      var res = new Dictionary<TKey, TValue>();
+      while (reader.Read())
+      {
+        TKey key = (TKey)reader.GetValue(0);
+        TValue val = MapNextRow<TValue>(reader, props, 1);
+        SetPropertyValue(reader, props, val, 0);
+        res[key] = val;
+      }
+      return res;
+    }
+
+    /// <summary>
     /// Map reader's first row to a model
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
@@ -100,18 +122,25 @@ namespace StoredProcedure.Extensions
       }
     }
 
-    private static T MapNextRow<T>(IDataReader reader, Dictionary<int, PropertyInfo> props) where T : class
+    private static T MapNextRow<T>(IDataReader reader, Dictionary<int, PropertyInfo> props, int columnOffset = 0) where T : class
     {
       T row = Activator.CreateInstance<T>();
-      for (int i = 0; i < reader.FieldCount; i++)
+      for (int i = columnOffset; i < reader.FieldCount; i++)
       {
-        if (props.TryGetValue(i, out PropertyInfo prop))
-        {
-          object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
-          prop.SetValue(row, value);
-        }
+        SetPropertyValue(reader, props, row, i);
       }
       return row;
+    }
+
+    private static bool SetPropertyValue<T>(IDataReader reader, Dictionary<int, PropertyInfo> props, T row, int i)
+    {
+      if (props.TryGetValue(i, out PropertyInfo prop))
+      {
+        object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
+        prop.SetValue(row, value);
+        return true;
+      }
+      return false;
     }
 
     private static Dictionary<int, PropertyInfo> GetDataReaderColumns<T>(IDataReader reader)
