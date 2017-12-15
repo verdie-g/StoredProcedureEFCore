@@ -19,10 +19,12 @@ namespace StoredProcedure.Extensions
     /// <returns></returns>
     public static List<T> Exec<T>(this DbContext ctx, string name, params (string, object)[] parameters)
     {
-      DbCommand cmd = CreateDbCommand(ctx, name, parameters);
-      using (IDataReader reader = cmd.ExecuteReader())
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
       {
-        return reader.ToList<T>();
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.ToList<T>();
+        }
       }
     }
 
@@ -36,8 +38,10 @@ namespace StoredProcedure.Extensions
     /// <returns></returns>
     public static T ExecScalar<T>(this DbContext ctx, string name, params (string, object)[] parameters)
     {
-      DbCommand cmd = CreateDbCommand(ctx, name, parameters);
-      return (T)cmd.ExecuteScalar();
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
+      {
+        return (T)cmd.ExecuteScalar();
+      }
     }
 
     /// <summary>
@@ -50,10 +54,12 @@ namespace StoredProcedure.Extensions
     /// <returns></returns>
     public static T ExecFirst<T>(this DbContext ctx, string name, params (string, object)[] parameters)
     {
-      DbCommand cmd = CreateDbCommand(ctx, name, parameters);
-      using (IDataReader reader = cmd.ExecuteReader())
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
       {
-        return reader.First<T>();
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.First<T>();
+        }
       }
     }
 
@@ -66,14 +72,16 @@ namespace StoredProcedure.Extensions
     /// <returns></returns>
     public static bool Exec(this DbContext ctx, string name, params (string, object)[] parameters)
     {
-      DbCommand cmd = CreateDbCommand(ctx, name, parameters);
-      DbParameter returnParameter = cmd.CreateParameter();
-      returnParameter.ParameterName = "@out";
-      returnParameter.DbType = DbType.Boolean;
-      returnParameter.Direction = ParameterDirection.ReturnValue;
-      cmd.Parameters.Add(returnParameter);
-      cmd.ExecuteNonQuery();
-      return Convert.ToBoolean(returnParameter.Value);
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
+      {
+        DbParameter returnParameter = cmd.CreateParameter();
+        returnParameter.ParameterName = "@out";
+        returnParameter.DbType = DbType.Boolean;
+        returnParameter.Direction = ParameterDirection.ReturnValue;
+        cmd.Parameters.Add(returnParameter);
+        cmd.ExecuteNonQuery();
+        return Convert.ToBoolean(returnParameter.Value);
+      }
     }
 
     private static DbCommand CreateDbCommand(DbContext ctx, string name, params (string name, object value)[] parameters)
