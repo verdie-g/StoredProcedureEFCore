@@ -62,6 +62,12 @@ namespace StoredProcedure
 
       single = da.SingleRow(1);
       CheckRow(single);
+
+      List<long> column = da.Column(0);
+      Debug.Assert(column.Count == 0);
+      column = da.Column(10);
+      Debug.Assert(column.Count == 10);
+      Debug.Assert(column[0] != 0);
     }
 
     private static void CheckRow(Dbo.ResultProc row)

@@ -102,6 +102,25 @@ namespace StoredProcedure.Extensions
     }
 
     /// <summary>
+    /// Execute a stored procedure and return the first column
+    /// </summary>
+    /// <typeparam name="T">Type of the result object</typeparam>
+    /// <param name="ctx"></param>
+    /// <param name="name">Procedure's name</param>
+    /// <param name="parameters">Procedure's parameters</param>
+    /// <returns></returns>
+    public static List<T> ExecColumn<T>(this DbContext ctx, string name, params (string, object)[] parameters) where T : IComparable
+    {
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
+      {
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.Column<T>();
+        }
+      }
+    }
+
+    /// <summary>
     /// Execute a stored procedure that only return a boolean
     /// </summary>
     /// <param name="ctx"></param>

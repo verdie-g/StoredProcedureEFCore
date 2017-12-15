@@ -42,6 +42,14 @@ namespace StoredProcedure
       }
     }
 
+    public List<long> Column(long limit)
+    {
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.ExecColumn<long>("[dbo].[ListAll]", ("limit", limit));
+      }
+    }
+
     /// <summary>
     /// Stored procedure that return the parameter
     /// </summary>

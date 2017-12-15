@@ -27,6 +27,23 @@ namespace StoredProcedure.Extensions
     }
 
     /// <summary>
+    /// Map first column to a list
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static List<T> Column<T>(this IDataReader reader) where T : IComparable
+    {
+      var res = new List<T>();
+      while (reader.Read())
+      {
+        T value = reader.IsDBNull(0) ? default(T) : (T)reader.GetValue(0);
+        res.Add(value);
+      }
+      return res;
+    }
+
+    /// <summary>
     /// Map reader's first row to a model
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
