@@ -35,6 +35,7 @@ T DbContext.ExecScalar<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecFirst<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecFirstOrDefault<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecSingle<T>(string name, params (string, object)[] parameters)
+bool Exec(string name, params (string, object)[] parameters)
 ```
 
 ### IDataReader
