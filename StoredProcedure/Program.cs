@@ -74,6 +74,11 @@ namespace StoredProcedure
       Debug.Assert(dic.Count == 100);
       CheckRow(dic.First().Value);
       Debug.Assert(dic.First().Value.Id != 0);
+
+      Dictionary<long, List<Dbo.ResultProc>> lookup = da.Lookup(100);
+      Debug.Assert(lookup.Count == 100);
+      CheckRow(lookup.First().Value[0]);
+      Debug.Assert(lookup.First().Value[0].Id != 0);
     }
 
     private static void CheckRow(Dbo.ResultProc row)

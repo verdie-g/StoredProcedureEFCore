@@ -44,7 +44,7 @@ namespace StoredProcedure.Extensions
     }
 
     /// <summary>
-    /// Create a dictionary using the first column as a key
+    /// Create a dictionary using the first column as a key. Keys must be unique
     /// </summary>
     /// <typeparam name="TKey">Type of the keys</typeparam>
     /// <typeparam name="TValue">Type of the values</typeparam>
@@ -61,6 +61,36 @@ namespace StoredProcedure.Extensions
         TValue val = MapNextRow<TValue>(reader, props, 1);
         SetPropertyValue(reader, props, val, 0);
         res[key] = val;
+      }
+      return res;
+    }
+
+    /// <summary>
+    /// Create a dictionary using the first column as a key
+    /// </summary>
+    /// <typeparam name="TKey">Type of the keys</typeparam>
+    /// <typeparam name="TValue">Type of the values</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static Dictionary<TKey, List<TValue>> Lookup<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
+    {
+      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<TValue>(reader);
+
+      var res = new Dictionary<TKey, List<TValue>>();
+      while (reader.Read())
+      {
+        TKey key = (TKey)reader.GetValue(0);
+        TValue val = MapNextRow<TValue>(reader, props, 1);
+        SetPropertyValue(reader, props, val, 0);
+
+        if (res.ContainsKey(key))
+        {
+          res[key].Add(val);
+        }
+        else
+        {
+          res[key] = new List<TValue>() { val };
+        }
       }
       return res;
     }

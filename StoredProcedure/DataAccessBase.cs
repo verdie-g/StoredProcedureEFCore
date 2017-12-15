@@ -58,6 +58,13 @@ namespace StoredProcedure
       }
     }
 
+    public Dictionary<long, List<Dbo.ResultProc>> Lookup(long limit)
+    {
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.ExecLookup<long, Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+      }
+    }
 
     /// <summary>
     /// Stored procedure that return the parameter
