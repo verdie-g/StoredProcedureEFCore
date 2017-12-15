@@ -4,7 +4,7 @@ using System.Data;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace StoredProcedure.Extensions
+namespace StoredProcedureEFCore
 {
   public static class IDataReaderExtension
   {

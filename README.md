@@ -12,9 +12,9 @@ The *Exec* method handles :
 - Underscores or hypens in result set column names ("column_name" is mapped to ColumnName property)
 
 ```csharp
-using (var context = new DataAccess.TestContext())
+using (DbContext ctx = GetContext())
 {
-  List<ResultModel> res = context.Exec<ResultModel>("dbo.StoredProcedureName", ("param_name", value));
+  List<ResultModel> res = ctx.Exec<ResultModel>("dbo.StoredProcedureName", ("param_name", value));
 }
 ```
 
