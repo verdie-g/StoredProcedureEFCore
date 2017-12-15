@@ -1,4 +1,4 @@
- # How to call a stored procedure in an ASP.NET core app
+ # Execute stored procedures with Entity Framework Core
 
 This code add a static method to *DbContext* named *Exec*.
 The latter calls a stored procedure and maps the result into a list of
@@ -52,6 +52,6 @@ T IDataReader.Single<T>()
 
 ## Why ?
 
-This repository was made in response of the following Entity Framework's issues : 
+Stored procedure execution is not supported in entity framework core:
 - [Raw store access APIs: Support for ad hoc mapping of arbitrary types #1862](https://github.com/aspnet/EntityFramework/issues/1862)
 - [Stored procedure mapping support #245](https://github.com/aspnet/EntityFramework/issues/245)
