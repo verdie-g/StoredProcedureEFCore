@@ -17,7 +17,7 @@ namespace StoredProcedure.Extensions
     public static List<T> ToList<T>(this IDataReader reader)
     {
       var res = new List<T>();
-      Dictionary<string, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
       while (reader.Read())
       {
         T row = MapNextRow<T>(reader, props);
@@ -34,18 +34,17 @@ namespace StoredProcedure.Extensions
     /// <returns></returns>
     public static T First<T>(this IDataReader reader)
     {
-      Dictionary<string, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
       reader.Read();
       return MapNextRow<T>(reader, props);
     }
 
-    private static T MapNextRow<T>(IDataReader reader, Dictionary<string, PropertyInfo> props)
+    private static T MapNextRow<T>(IDataReader reader, Dictionary<int, PropertyInfo> props)
     {
       T row = Activator.CreateInstance<T>();
       for (int i = 0; i < reader.FieldCount; i++)
       {
-        string name = reader.GetName(i);
-        if (props.TryGetValue(name, out PropertyInfo prop))
+        if (props.TryGetValue(i, out PropertyInfo prop))
         {
           object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
           prop.SetValue(row, value);
@@ -54,9 +53,9 @@ namespace StoredProcedure.Extensions
       return row;
     }
 
-    private static Dictionary<string, PropertyInfo> GetDataReaderColumns<T>(IDataReader reader)
+    private static Dictionary<int, PropertyInfo> GetDataReaderColumns<T>(IDataReader reader)
     {
-      var res = new Dictionary<string, PropertyInfo>(reader.FieldCount);
+      var res = new Dictionary<int, PropertyInfo>(reader.FieldCount);
       Type modelType = typeof(T);
       for (int i = 0; i < reader.FieldCount; i++)
       {
@@ -65,7 +64,7 @@ namespace StoredProcedure.Extensions
         PropertyInfo prop = modelType.GetProperty(nameNoUnderscore, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
         if (prop != null)
         {
-          res[name] = prop;
+          res[i] = prop;
         }
       }
       return res;
