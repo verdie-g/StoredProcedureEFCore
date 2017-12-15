@@ -161,6 +161,25 @@ namespace StoredProcedure.Extensions
     }
 
     /// <summary>
+    /// Execute a stored procedure and create a set with the result set
+    /// </summary>
+    /// <typeparam name="T">Type of the set</typeparam>
+    /// <param name="ctx"></param>
+    /// <param name="name">Procedure's name</param>
+    /// <param name="parameters">Procedure's parameters</param>
+    /// <returns></returns>
+    public static HashSet<T> ExecSet<T>(this DbContext ctx, string name, params (string, object)[] parameters) where T : IComparable
+    {
+      using (DbCommand cmd = CreateDbCommand(ctx, name, parameters))
+      {
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.Set<T>();
+        }
+      }
+    }
+
+    /// <summary>
     /// Execute a stored procedure that only return a boolean
     /// </summary>
     /// <param name="ctx"></param>

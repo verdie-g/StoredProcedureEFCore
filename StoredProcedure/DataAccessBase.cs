@@ -66,6 +66,14 @@ namespace StoredProcedure
       }
     }
 
+    public HashSet<long> Set(long limit)
+    {
+      using (DataAccess.TestContext ctx = new DataAccess.TestContext())
+      {
+        return ctx.ExecSet<long>("[dbo].[ListAll]", ("limit", limit));
+      }
+    }
+
     /// <summary>
     /// Stored procedure that return the parameter
     /// </summary>

@@ -96,6 +96,25 @@ namespace StoredProcedure.Extensions
     }
 
     /// <summary>
+    /// Create a set with the first column
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static HashSet<T> Set<T>(this IDataReader reader) where T : IComparable
+    {
+      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+
+      var res = new HashSet<T>();
+      while (reader.Read())
+      {
+        T val = (T)reader.GetValue(0);
+        res.Add(val);
+      }
+      return res;
+    }
+
+    /// <summary>
     /// Map reader's first row to a model
     /// </summary>
     /// <typeparam name="T">Model</typeparam>

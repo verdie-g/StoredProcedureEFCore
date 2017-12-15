@@ -32,7 +32,8 @@ T DbContext.ExecFirst<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecFirstOrDefault<T>(string name, params (string, object)[] parameters)
 T DbContext.ExecSingle<T>(string name, params (string, object)[] parameters)
 Dictionary<TKey, TValue> DbContext.ExecDictionary<TKey, TValue>(string name, params (string, object)[] parameters)
-Dictionary<TKey, List<TValue>> ExecLookup<TKey, TValue>(string name, params (string, object)[] parameters)
+Dictionary<TKey, List<TValue>> DbContext.ExecLookup<TKey, TValue>(string name, params (string, object)[] parameters)
+HashSet<T> DbContext.ExecSet<T>(string name, params (string, object)[] parameters)
 ```
 
 ### IDataReader
@@ -42,7 +43,8 @@ T IDataReader.First<T>()
 T IDataReader.FirstOrDefault<T>()
 T IDataReader.Single<T>()
 Dictionary<TKey, TValue> IDataReader.Dictionary<TKey, TValue>()
-Dictionary<TKey, List<TValue>> Lookup<TKey, TValue>()
+Dictionary<TKey, List<TValue>> IDataReader.Lookup<TKey, TValue>()
+HashSet<T> IDataReader.Set<T>()
 ```
 
 ## Why ?
