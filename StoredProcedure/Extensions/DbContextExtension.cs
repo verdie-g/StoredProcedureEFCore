@@ -135,7 +135,7 @@ namespace StoredProcedure.Extensions
       {
         using (IDataReader reader = cmd.ExecuteReader())
         {
-          return reader.Dictionary<TKey, TValue>();
+          return reader.ToDictionary<TKey, TValue>();
         }
       }
     }
@@ -155,7 +155,7 @@ namespace StoredProcedure.Extensions
       {
         using (IDataReader reader = cmd.ExecuteReader())
         {
-          return reader.Lookup<TKey, TValue>();
+          return reader.ToLookup<TKey, TValue>();
         }
       }
     }
@@ -174,7 +174,7 @@ namespace StoredProcedure.Extensions
       {
         using (IDataReader reader = cmd.ExecuteReader())
         {
-          return reader.Set<T>();
+          return reader.ToSet<T>();
         }
       }
     }

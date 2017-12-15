@@ -50,7 +50,7 @@ namespace StoredProcedure.Extensions
     /// <typeparam name="TValue">Type of the values</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static Dictionary<TKey, TValue> Dictionary<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
     {
       Dictionary<int, PropertyInfo> props = GetDataReaderColumns<TValue>(reader);
 
@@ -72,7 +72,7 @@ namespace StoredProcedure.Extensions
     /// <typeparam name="TValue">Type of the values</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static Dictionary<TKey, List<TValue>> Lookup<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
+    public static Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
     {
       Dictionary<int, PropertyInfo> props = GetDataReaderColumns<TValue>(reader);
 
@@ -101,7 +101,7 @@ namespace StoredProcedure.Extensions
     /// <typeparam name="T"></typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static HashSet<T> Set<T>(this IDataReader reader) where T : IComparable
+    public static HashSet<T> ToSet<T>(this IDataReader reader) where T : IComparable
     {
       Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
 

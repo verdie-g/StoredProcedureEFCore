@@ -42,9 +42,9 @@ List<T> IDataReader.ToList<T>()
 T IDataReader.First<T>()
 T IDataReader.FirstOrDefault<T>()
 T IDataReader.Single<T>()
-Dictionary<TKey, TValue> IDataReader.Dictionary<TKey, TValue>()
-Dictionary<TKey, List<TValue>> IDataReader.Lookup<TKey, TValue>()
-HashSet<T> IDataReader.Set<T>()
+Dictionary<TKey, TValue> IDataReader.ToDictionary<TKey, TValue>()
+Dictionary<TKey, List<TValue>> IDataReader.ToLookup<TKey, TValue>()
+HashSet<T> IDataReader.ToSet<T>()
 ```
 
 ## Why ?
