@@ -14,7 +14,7 @@ The *Exec* method handles :
 ```csharp
 using (var context = new DataAccess.TestContext())
 {
-  List<ResultModel> res = context.Exec<ResultModel>("[dbo].[StoredProcedureName]", ("param_name", value));
+  List<ResultModel> res = context.Exec<ResultModel>("dbo.StoredProcedureName", ("param_name", value));
 }
 ```
 

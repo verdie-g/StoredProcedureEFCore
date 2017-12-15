@@ -14,7 +14,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.Exec<Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+        return ctx.Exec<Dbo.ResultProc>("dbo.ListAll", ("limit", limit));
       }
     }
 
@@ -22,7 +22,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.ExecScalar<long>("[dbo].[ListAll]");
+        return ctx.ExecScalar<long>("dbo.ListAll");
       }
     }
 
@@ -30,7 +30,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.ExecFirst<Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+        return ctx.ExecFirst<Dbo.ResultProc>("dbo.ListAll", ("limit", limit));
       }
     }
 
@@ -38,7 +38,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.ExecSingle<Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+        return ctx.ExecSingle<Dbo.ResultProc>("dbo.ListAll", ("limit", limit));
       }
     }
 
@@ -46,7 +46,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.ExecColumn<long>("[dbo].[ListAll]", ("limit", limit));
+        return ctx.ExecColumn<long>("dbo.ListAll", ("limit", limit));
       }
     }
 
@@ -54,7 +54,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.ExecDictionary<long, Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+        return ctx.ExecDictionary<long, Dbo.ResultProc>("dbo.ListAll", ("limit", limit));
       }
     }
 
@@ -62,7 +62,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.ExecLookup<long, Dbo.ResultProc>("[dbo].[ListAll]", ("limit", limit));
+        return ctx.ExecLookup<long, Dbo.ResultProc>("dbo.ListAll", ("limit", limit));
       }
     }
 
@@ -70,7 +70,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.ExecSet<long>("[dbo].[ListAll]", ("limit", limit));
+        return ctx.ExecSet<long>("dbo.ListAll", ("limit", limit));
       }
     }
 
@@ -83,7 +83,7 @@ namespace StoredProcedure
     {
       using (DataAccess.TestContext ctx = new DataAccess.TestContext())
       {
-        return ctx.Exec("[dbo].[ReturnBoolean]", ("boolean_to_return", boolToReturn));
+        return ctx.Exec("dbo.ReturnBoolean", ("boolean_to_return", boolToReturn));
       }
     }
   }
