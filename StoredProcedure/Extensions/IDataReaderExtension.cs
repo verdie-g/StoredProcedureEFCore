@@ -47,8 +47,8 @@ namespace StoredProcedure.Extensions
         string name = reader.GetName(i);
         if (props.TryGetValue(name, out PropertyInfo prop))
         {
-          object value = reader.GetValue(i);
-          prop.SetValue(row, value == DBNull.Value ? null : value);
+          object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
+          prop.SetValue(row, value);
         }
       }
       return row;
