@@ -18,10 +18,6 @@ using (DbContext ctx = GetContext())
 }
 ```
 
-Interesting files are:
-- [DbContextExtension.cs](https://github.com/verdie-g/StoredProcedureDotNetCore/blob/master/StoredProcedure/Extensions/DbContextExtension.cs)
-- [IDataReaderExtension.cs](https://github.com/verdie-g/StoredProcedureDotNetCore/blob/master/StoredProcedure/Extensions/IDataReaderExtension.cs)
-
 ## API
 
 ### DbContext
