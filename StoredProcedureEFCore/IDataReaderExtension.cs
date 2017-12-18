@@ -18,7 +18,7 @@ namespace StoredProcedureEFCore
     public static List<T> ToList<T>(this IDataReader reader) where T : class
     {
       var res = new List<T>();
-      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+      PropertyInfo[] props = GetDataReaderColumns<T>(reader);
       while (reader.Read())
       {
         T row = MapNextRow<T>(reader, props);
@@ -53,7 +53,7 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
     {
-      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<TValue>(reader);
+      PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
 
       var res = new Dictionary<TKey, TValue>();
       while (reader.Read())
@@ -75,7 +75,7 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class
     {
-      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<TValue>(reader);
+      PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
 
       var res = new Dictionary<TKey, List<TValue>>();
       while (reader.Read())
@@ -104,7 +104,7 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static HashSet<T> ToSet<T>(this IDataReader reader) where T : IComparable
     {
-      Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+      PropertyInfo[] props = GetDataReaderColumns<T>(reader);
 
       var res = new HashSet<T>();
       while (reader.Read())
@@ -154,7 +154,7 @@ namespace StoredProcedureEFCore
 
       if (reader.Read())
       {
-        Dictionary<int, PropertyInfo> props = GetDataReaderColumns<T>(reader);
+        PropertyInfo[] props = GetDataReaderColumns<T>(reader);
         T row = MapNextRow<T>(reader, props);
 
         if (throwIfNotSingle && reader.Read())
@@ -171,7 +171,7 @@ namespace StoredProcedureEFCore
       }
     }
 
-    private static T MapNextRow<T>(IDataReader reader, Dictionary<int, PropertyInfo> props, int columnOffset = 0) where T : class
+    private static T MapNextRow<T>(IDataReader reader, PropertyInfo[] props, int columnOffset = 0) where T : class
     {
       T row = Activator.CreateInstance<T>();
       for (int i = columnOffset; i < reader.FieldCount; i++)
@@ -181,20 +181,17 @@ namespace StoredProcedureEFCore
       return row;
     }
 
-    private static bool SetPropertyValue<T>(IDataReader reader, Dictionary<int, PropertyInfo> props, T row, int i)
+    private static void SetPropertyValue<T>(IDataReader reader, PropertyInfo[] props, T row, int i)
     {
-      if (props.TryGetValue(i, out PropertyInfo prop))
-      {
-        object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
-        prop.SetValue(row, value);
-        return true;
-      }
-      return false;
+      Debug.Assert(i >= 0 && i < reader.FieldCount);
+
+      object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
+      props[i].SetValue(row, value);
     }
 
-    private static Dictionary<int, PropertyInfo> GetDataReaderColumns<T>(IDataReader reader)
+    private static PropertyInfo[] GetDataReaderColumns<T>(IDataReader reader)
     {
-      var res = new Dictionary<int, PropertyInfo>(reader.FieldCount);
+      var res = new PropertyInfo[reader.FieldCount];
       Type modelType = typeof(T);
       for (int i = 0; i < reader.FieldCount; i++)
       {
