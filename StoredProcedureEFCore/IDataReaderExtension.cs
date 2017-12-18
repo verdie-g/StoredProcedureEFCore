@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -149,8 +150,7 @@ namespace StoredProcedureEFCore
 
     private static T First<T>(IDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class
     {
-      if (orDefault && throwIfNotSingle)
-        throw new ArgumentException("orDefault and throwIfNotSingle booleans can't be both true.");
+      Debug.Assert(orDefault || throwIfNotSingle);
 
       if (reader.Read())
       {
