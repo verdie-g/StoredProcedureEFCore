@@ -185,6 +185,9 @@ namespace StoredProcedureEFCore
     {
       Debug.Assert(i >= 0 && i < reader.FieldCount);
 
+      if (props[i] == null)
+        return;
+
       object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
       props[i].SetValue(row, value);
     }
@@ -197,11 +200,7 @@ namespace StoredProcedureEFCore
       {
         string name = reader.GetName(i);
         string nameNoUnderscore = Regex.Replace(name, "[_-]", "");
-        PropertyInfo prop = modelType.GetProperty(nameNoUnderscore, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        if (prop != null)
-        {
-          res[i] = prop;
-        }
+        res[i] = modelType.GetProperty(nameNoUnderscore, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
       }
       return res;
     }
