@@ -10,11 +10,11 @@ namespace StoredProcedureEFCore.Tests.SqlServer
     {
       DbContext ctx = new TestContext();
 
-      List<Table1> rows = null;
+      List<Model> rows = null;
 
       ctx.LoadStoredProc("dbo.ListAll")
-         .AddParam("limit", 100)
-         .Exec(r => rows = r.ToList<Table1>());
+         .AddParam("limit", 300)
+         .Exec(r => rows = r.ToList<Model>());
 
       ctx.LoadStoredProc("dbo.ReturnBoolean")
          .AddParam("boolean_to_return", true)
