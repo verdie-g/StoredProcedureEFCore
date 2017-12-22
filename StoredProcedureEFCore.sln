@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoredProcedureEFCore", "StoredProcedureEFCore\StoredProcedureEFCore.csproj", "{4AD24010-ADC2-463A-B0F7-7BFD8B89CDB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoredProcedureEFCore.Tests.SqlServer", "StoredProcedureEFCore.Tests.SqlServer\StoredProcedureEFCore.Tests.SqlServer.csproj", "{B0106B50-2BA8-4DF1-87C9-18EF750495EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoredProcedureEFCore.Tests.SqlServer", "StoredProcedureEFCore.Tests.SqlServer\StoredProcedureEFCore.Tests.SqlServer.csproj", "{B0106B50-2BA8-4DF1-87C9-18EF750495EF}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database.SqlServer", "Database.SqlServer\Database.SqlServer.sqlproj", "{3C66C52D-A576-4E88-8883-A98A241C3EB5}"
 EndProject

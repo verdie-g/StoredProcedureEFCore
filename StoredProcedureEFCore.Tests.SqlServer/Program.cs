@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace StoredProcedureEFCore.Tests.SqlServer
 {
@@ -10,9 +9,25 @@ namespace StoredProcedureEFCore.Tests.SqlServer
     static void Main(string[] args)
     {
       DbContext ctx = new TestContext();
-      List<Table1> rows = ctx.Exec<Table1>("dbo.ListAll", ("limit", 100));
-      Debug.Assert(rows.Count == 100);
-      Debug.Assert(rows[0].Date != default(DateTime));
+
+      List<Table1> rows = null;
+
+      ctx.LoadStoredProc("dbo.ListAll")
+         .AddParam("limit", 100)
+         .Exec(r => rows = r.ToList<Table1>());
+
+      ctx.LoadStoredProc("dbo.ReturnBoolean")
+         .AddParam("boolean_to_return", true)
+         .ReturnValue(out IReturnParameter<bool> retParam)
+         .ExecNonQuery();
+
+      bool b = retParam.Value;
+
+      ctx.LoadStoredProc("dbo.ListAll")
+         .AddParam("limit", 1)
+         .ExecScalar(out long l);
+
+      Console.WriteLine(l);
     }
   }
 }
