@@ -50,11 +50,11 @@ T                              Single<T>()
 
 ### IStoredProcBuilder
 ```csharp
-IStoredProcBuilder             AddParam(string name, object val);
-IStoredProcBuilder             ReturnValue<T>(out IReturnParameter<T> retParam);
-void                           Exec(Action<IDataReader> action);
-void                           ExecNonQuery();
-void                           ExecScalar<T>(out T val);
+IStoredProcBuilder             AddParam(string name, object val)
+IStoredProcBuilder             ReturnValue<T>(out IReturnParameter<T> retParam)
+void                           Exec(Action<IDataReader> action)
+void                           ExecNonQuery()
+void                           ExecScalar<T>(out T val)
 ```
 
 ## Why ?
