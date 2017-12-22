@@ -60,11 +60,15 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Table_1.sql" />
     <Build Include="dbo\Stored Procedures\ReturnBoolean.sql" />
     <Build Include="dbo\Stored Procedures\ListAll.sql" />
     <Build Include="dbo\Stored Procedures\Empty.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dbo\Scripts\Populate.sql" />
   </ItemGroup>
 </Project>
