@@ -1,49 +1,60 @@
  # Execute stored procedures with Entity Framework Core
 
-This code add a static method to *DbContext* named *Exec*.
-The latter calls a stored procedure and maps the result into a list of
-the specified type. If the model type is not specified, it will return a
-boolean gotten from the SQL Server return statement.
+DbContext extension with *LoadStoredProc* method which creates
+an IStoredProcBuilder.
 
-The *Exec* method handles :
+The method handles :
 - Extra column in result set
 - Extra property in model
 - Null values in result set
 - Underscores or hypens in result set column names ("column_name" is mapped to ColumnName property)
+- Int (db) to enumeration (result model) mapping
 
 ```csharp
-using (DbContext ctx = GetContext())
-{
-  List<ResultModel> res = ctx.Exec<ResultModel>("dbo.StoredProcedureName", ("param_name", value));
-}
+List<Model> rows = null;
+
+ctx.LoadStoredProc("dbo.ListAll")
+   .AddParam("limit", 300)
+   .Exec(r => rows = r.ToList<Model>());
+
+ctx.LoadStoredProc("dbo.ReturnBoolean")
+   .AddParam("boolean_to_return", true)
+   .ReturnValue(out IReturnParameter<bool> retParam)
+   .ExecNonQuery();
+
+bool b = retParam.Value;
+
+ctx.LoadStoredProc("dbo.ListAll")
+   .AddParam("limit", 1)
+   .ExecScalar(out long l);
 ```
 
 ## API
 
 ### DbContext
 ```csharp
-List<T> DbContext.Exec<T>(string name, params (string, object)[] parameters)
-Dictionary<TKey, TValue> DbContext.ExecDictionary<TKey, TValue>(string name, params (string, object)[] parameters)
-Dictionary<TKey, List<TValue>> DbContext.ExecLookup<TKey, TValue>(string name, params (string, object)[] parameters)
-HashSet<T> DbContext.ExecSet<T>(string name, params (string, object)[] parameters)
-List<T> ExecColumn<T>(string name, params (string, object)[] parameters)
-T DbContext.ExecScalar<T>(string name, params (string, object)[] parameters)
-T DbContext.ExecFirst<T>(string name, params (string, object)[] parameters)
-T DbContext.ExecFirstOrDefault<T>(string name, params (string, object)[] parameters)
-T DbContext.ExecSingle<T>(string name, params (string, object)[] parameters)
-bool Exec(string name, params (string, object)[] parameters)
+IStoredProcBuilder             LoadStoredProc(this DbContext ctx, string name)
 ```
 
 ### IDataReader
 ```csharp
-List<T> IDataReader.ToList<T>()
-Dictionary<TKey, TValue> IDataReader.ToDictionary<TKey, TValue>()
-Dictionary<TKey, List<TValue>> IDataReader.ToLookup<TKey, TValue>()
-HashSet<T> IDataReader.ToSet<T>()
-List<T> Column<T>()
-T IDataReader.First<T>()
-T IDataReader.FirstOrDefault<T>()
-T IDataReader.Single<T>()
+List<T>                        ToList<T>()
+Dictionary<TKey, TValue>       ToDictionary<TKey, TValue>()
+Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>()
+HashSet<T>                     ToSet<T>()
+List<T>                        Column<T>()
+T                              First<T>()
+T                              FirstOrDefault<T>()
+T                              Single<T>()
+```
+
+### IStoredProcBuilder
+```csharp
+IStoredProcBuilder             AddParam(string name, object val);
+IStoredProcBuilder             ReturnValue<T>(out IReturnParameter<T> retParam);
+void                           Exec(Action<IDataReader> action);
+void                           ExecNonQuery();
+void                           ExecScalar<T>(out T val);
 ```
 
 ## Why ?
