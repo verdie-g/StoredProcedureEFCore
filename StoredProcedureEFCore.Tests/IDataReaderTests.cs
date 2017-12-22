@@ -118,6 +118,17 @@ namespace StoredProcedureEFCore.Tests
       Assert.Equal(col[1], _testModelsCollection[1].Sb);
     }
 
+
+    [Fact]
+    public void TestColumn2()
+    {
+      IDataReader r = CreateFakeDataReader(0, 1);
+      List<ulong> col = r.Column<ulong>("Ul");
+      Assert.Equal(col.Count, 2);
+      Assert.Equal(col[0], _testModelsCollection[0].Ul);
+      Assert.Equal(col[1], _testModelsCollection[1].Ul);
+    }
+
     private void TestModelEqual(TestModel tm1, int i)
     {
       TestModel tm2 = _testModelsCollection[i];

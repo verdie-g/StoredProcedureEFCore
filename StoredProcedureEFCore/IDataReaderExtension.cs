@@ -28,17 +28,20 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map first column to a list
+    /// Map the first or the specified column to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
+    /// <param name="columnName">Name of the column to read</param>
     /// <returns></returns>
-    public static List<T> Column<T>(this IDataReader reader) where T : IComparable
+    public static List<T> Column<T>(this IDataReader reader, string columnName = null) where T : IComparable
     {
+      int ord = columnName == null ? 0 : reader.GetOrdinal(columnName);
+
       var res = new List<T>();
       while (reader.Read())
       {
-        T value = reader.IsDBNull(0) ? default(T) : (T)reader.GetValue(0);
+        T value = reader.IsDBNull(ord) ? default(T) : (T)reader.GetValue(ord);
         res.Add(value);
       }
       return res;
