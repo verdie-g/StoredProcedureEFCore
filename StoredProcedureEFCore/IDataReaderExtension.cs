@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace StoredProcedureEFCore
@@ -174,6 +175,7 @@ namespace StoredProcedureEFCore
       }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static T MapNextRow<T>(IDataReader reader, PropertyInfo[] props, int columnOffset = 0) where T : class
     {
       T row = Activator.CreateInstance<T>();
@@ -184,6 +186,7 @@ namespace StoredProcedureEFCore
       return row;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void SetPropertyValue<T>(IDataReader reader, PropertyInfo[] props, T row, int i)
     {
       Debug.Assert(i >= 0 && i < reader.FieldCount);
