@@ -22,7 +22,7 @@ long limitOutValue = limitOut.Value;
 
 ctx.LoadStoredProc("dbo.ReturnBoolean")
    .AddParam("boolean_to_return", true)
-   .ReturnValue(out IReturnParameter<bool> retParam)
+   .ReturnValue(out IOutputParam<bool> retParam)
    .ExecNonQuery();
 
 bool b = retParam.Value;
