@@ -36,7 +36,7 @@ ctx.LoadStoredProc("dbo.ListAll")
 
 ### DbContext
 ```csharp
-IStoredProcBuilder             LoadStoredProc(this DbContext ctx, string name)
+IStoredProcBuilder             LoadStoredProc(string name)
 ```
 
 ### IDataReader
