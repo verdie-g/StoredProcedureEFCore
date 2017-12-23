@@ -25,16 +25,15 @@ namespace StoredProcedureEFCore
       return this;
     }
 
-    public IStoredProcBuilder ReturnValue<T>(out IReturnParameter<T> retParam)
+    public IStoredProcBuilder AddOutputParam<T>(string name, out IOutputParam<T> outParam)
     {
-      DbParameter param = AddParamInner("out", p =>
-      {
-        p.Direction = ParameterDirection.ReturnValue;
-        p.DbType = DbTypeConverter.ConvertToDbType<T>();
-      });
+      outParam = AddOutputParamInner<T>(name, ParameterDirection.Output);
+      return this;
+    }
 
-      retParam = new ReturnParameter<T>(param);
-
+    public IStoredProcBuilder ReturnValue<T>(out IOutputParam<T> retParam)
+    {
+      retParam = AddOutputParamInner<T>("_retParam", ParameterDirection.ReturnValue);
       return this;
     }
 
@@ -65,7 +64,6 @@ namespace StoredProcedureEFCore
       }
     }
 
-
     public void ExecScalar<T>(out T val)
     {
       try
@@ -81,6 +79,17 @@ namespace StoredProcedureEFCore
     public void Dispose()
     {
       _cmd.Dispose();
+    }
+
+    private OutputParam<T> AddOutputParamInner<T>(string name, ParameterDirection direction)
+    {
+      DbParameter param = AddParamInner(name, p =>
+      {
+        p.Direction = direction;
+        p.DbType = DbTypeConverter.ConvertToDbType<T>();
+      });
+
+      return new OutputParam<T>(param);
     }
 
     private DbParameter AddParamInner(string name, Action<DbParameter> action = null)

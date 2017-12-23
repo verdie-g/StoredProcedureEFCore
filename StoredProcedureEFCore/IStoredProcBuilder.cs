@@ -17,12 +17,21 @@ namespace StoredProcedureEFCore
     IStoredProcBuilder AddParam(string name, object val);
 
     /// <summary>
+    /// Add out parameter
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="name">Parameter's name</param>
+    /// <param name="outParam"></param>
+    /// <returns></returns>
+    IStoredProcBuilder AddOutputParam<T>(string name, out IOutputParam<T> outParam);
+
+    /// <summary>
     /// Add return value parameter
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="retParam"></param>
     /// <returns></returns>
-    IStoredProcBuilder ReturnValue<T>(out IReturnParameter<T> retParam);
+    IStoredProcBuilder ReturnValue<T>(out IOutputParam<T> retParam);
 
     /// <summary>
     /// Execute the stored procedure

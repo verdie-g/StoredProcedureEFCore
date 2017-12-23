@@ -14,11 +14,14 @@ namespace StoredProcedureEFCore.Tests.SqlServer
 
       ctx.LoadStoredProc("dbo.ListAll")
          .AddParam("limit", 300)
+         .AddOutputParam("limitOut", out IOutputParam<long> limitOut)
          .Exec(r => rows = r.ToList<Model>());
+
+      long limitOutValue = limitOut.Value;
 
       ctx.LoadStoredProc("dbo.ReturnBoolean")
          .AddParam("boolean_to_return", true)
-         .ReturnValue(out IReturnParameter<bool> retParam)
+         .ReturnValue(out IOutputParam<bool> retParam)
          .ExecNonQuery();
 
       bool b = retParam.Value;

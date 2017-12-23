@@ -1,6 +1,6 @@
 ﻿namespace StoredProcedureEFCore
 {
-  public interface IReturnParameter<T>
+  public interface IOutputParam<T>
   {
     T Value { get; }
   }

@@ -3,14 +3,16 @@ using System.Data.Common;
 
 namespace StoredProcedureEFCore
 {
-  internal class ReturnParameter<T> : IReturnParameter<T>
+  internal class OutputParam<T> : IOutputParam<T>
   {
-    public ReturnParameter(DbParameter param)
+    public OutputParam(DbParameter param)
     {
       _dbParam = param;
     }
 
     public T Value => (T)Convert.ChangeType(_dbParam.Value, typeof(T));
+
+    public override string ToString() => _dbParam.Value.ToString();
 
     private DbParameter _dbParam;
   }
