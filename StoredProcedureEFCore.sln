@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoredProcedureEFCore", "St
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoredProcedureEFCore.Tests.SqlServer", "StoredProcedureEFCore.Tests.SqlServer\StoredProcedureEFCore.Tests.SqlServer.csproj", "{B0106B50-2BA8-4DF1-87C9-18EF750495EF}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database.SqlServer", "Database.SqlServer\Database.SqlServer.sqlproj", "{3C66C52D-A576-4E88-8883-A98A241C3EB5}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "StoredProcedureEFCore.Tests.SqlServer.Database", "Database.SqlServer\StoredProcedureEFCore.Tests.SqlServer.Database.sqlproj", "{3C66C52D-A576-4E88-8883-A98A241C3EB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoredProcedureEFCore.Tests", "StoredProcedureEFCore.Tests\StoredProcedureEFCore.Tests.csproj", "{5D2098BD-42DB-48D5-8AF9-90796F436538}"
 EndProject
