@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace StoredProcedureEFCore
@@ -28,17 +29,20 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map first column to a list
+    /// Map the first or the specified column to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
+    /// <param name="columnName">Name of the column to read</param>
     /// <returns></returns>
-    public static List<T> Column<T>(this IDataReader reader) where T : IComparable
+    public static List<T> Column<T>(this IDataReader reader, string columnName = null) where T : IComparable
     {
+      int ord = columnName == null ? 0 : reader.GetOrdinal(columnName);
+
       var res = new List<T>();
       while (reader.Read())
       {
-        T value = reader.IsDBNull(0) ? default(T) : (T)reader.GetValue(0);
+        T value = reader.IsDBNull(ord) ? default(T) : (T)reader.GetValue(ord);
         res.Add(value);
       }
       return res;
@@ -171,6 +175,7 @@ namespace StoredProcedureEFCore
       }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static T MapNextRow<T>(IDataReader reader, PropertyInfo[] props, int columnOffset = 0) where T : class
     {
       T row = Activator.CreateInstance<T>();
@@ -181,6 +186,7 @@ namespace StoredProcedureEFCore
       return row;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void SetPropertyValue<T>(IDataReader reader, PropertyInfo[] props, T row, int i)
     {
       Debug.Assert(i >= 0 && i < reader.FieldCount);
