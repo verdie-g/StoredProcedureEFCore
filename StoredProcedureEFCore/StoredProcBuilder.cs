@@ -11,6 +11,9 @@ namespace StoredProcedureEFCore
 
     public StoredProcBuilder(DbContext ctx, string name)
     {
+      if (name is null)
+        throw new ArgumentNullException(nameof(name));
+
       DbCommand cmd = ctx.Database.GetDbConnection().CreateCommand();
       cmd.CommandType = CommandType.StoredProcedure;
       cmd.CommandText = name;
@@ -45,6 +48,9 @@ namespace StoredProcedureEFCore
 
     public void Exec(Action<IDataReader> action)
     {
+      if (action is null)
+        throw new ArgumentNullException(nameof(action));
+
       try
       {
         using (IDataReader r = _cmd.ExecuteReader())
@@ -100,6 +106,9 @@ namespace StoredProcedureEFCore
 
     private DbParameter AddParamInner(string name, object val = null, Action<DbParameter> action = null)
     {
+      if (name is null)
+        throw new ArgumentNullException(nameof(name));
+
       DbParameter param = _cmd.CreateParameter();
       param.ParameterName = '@' + name;
       param.Value = val;
