@@ -15,14 +15,14 @@ List<Model> rows = null;
 
 ctx.LoadStoredProc("dbo.ListAll")
    .AddParam("limit", 300)
-   .AddOutputParam("limitOut", out IOutputParam<long> limitOut)
+   .AddOutParam("limitOut", out IOutParam<long> limitOut)
    .Exec(r => rows = r.ToList<Model>());
 
 long limitOutValue = limitOut.Value;
 
 ctx.LoadStoredProc("dbo.ReturnBoolean")
    .AddParam("boolean_to_return", true)
-   .ReturnValue(out IOutputParam<bool> retParam)
+   .ReturnValue(out IOutParam<bool> retParam)
    .ExecNonQuery();
 
 bool b = retParam.Value;
@@ -54,7 +54,8 @@ T                              Single<T>()
 ### IStoredProcBuilder
 ```csharp
 IStoredProcBuilder             AddParam(string name, object val)
-IStoredProcBuilder             AddOutputParam<T>(string name, out IOutputParam<T> outParam)
+IStoredProcBuilder             AddInputOutputParam<T>(string name, T val, out OutParam<T> outParam);
+IStoredProcBuilder             AddOutParam<T>(string name, out IOutParam<T> outParam)
 IStoredProcBuilder             ReturnValue<T>(out IReturnParameter<T> retParam)
 void                           Exec(Action<IDataReader> action)
 void                           ExecNonQuery()

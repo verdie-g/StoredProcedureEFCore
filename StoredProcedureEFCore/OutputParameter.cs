@@ -3,7 +3,7 @@ using System.Data.Common;
 
 namespace StoredProcedureEFCore
 {
-  internal class OutputParam<T> : IOutputParam<T>
+  internal class OutputParam<T> : IOutParam<T>
   {
     public OutputParam(DbParameter param)
     {

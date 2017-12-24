@@ -11,27 +11,37 @@ namespace StoredProcedureEFCore
     /// <summary>
     /// Add parameter
     /// </summary>
-    /// <param name="name">Parameter's name</param>
-    /// <param name="val">Parameter's value</param>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="val">Value of the parameter</param>
     /// <returns></returns>
     IStoredProcBuilder AddParam(string name, object val);
 
     /// <summary>
+    /// Add in/out parameter
+    /// </summary>
+    /// <typeparam name="T">Type of the parameter</typeparam>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="val">Value of the parameter</param>
+    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
+    /// <returns></returns>
+    IStoredProcBuilder AddInputOutputParam<T>(string name, T val, out IOutParam<T> outParam);
+
+    /// <summary>
     /// Add out parameter
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="name">Parameter's name</param>
-    /// <param name="outParam"></param>
+    /// <typeparam name="T">Type of the parameter</typeparam>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
     /// <returns></returns>
-    IStoredProcBuilder AddOutputParam<T>(string name, out IOutputParam<T> outParam);
+    IStoredProcBuilder AddOutputParam<T>(string name, out IOutParam<T> outParam);
 
     /// <summary>
     /// Add return value parameter
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="retParam"></param>
+    /// <typeparam name="T">Type of the parameter</typeparam>
+    /// <param name="retParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
     /// <returns></returns>
-    IStoredProcBuilder ReturnValue<T>(out IOutputParam<T> retParam);
+    IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam);
 
     /// <summary>
     /// Execute the stored procedure

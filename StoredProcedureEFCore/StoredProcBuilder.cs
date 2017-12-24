@@ -21,19 +21,25 @@ namespace StoredProcedureEFCore
 
     public IStoredProcBuilder AddParam(string name, object val)
     {
-      AddParamInner(name, p => p.Value = val);
+      AddParamInner(name, val);
       return this;
     }
 
-    public IStoredProcBuilder AddOutputParam<T>(string name, out IOutputParam<T> outParam)
+    public IStoredProcBuilder AddOutputParam<T>(string name, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner<T>(name, ParameterDirection.Output);
+      outParam = AddOutputParamInner<T>(name, null, ParameterDirection.Output);
       return this;
     }
 
-    public IStoredProcBuilder ReturnValue<T>(out IOutputParam<T> retParam)
+    public IStoredProcBuilder AddInputOutputParam<T>(string name, T val, out IOutParam<T> outParam)
     {
-      retParam = AddOutputParamInner<T>("_retParam", ParameterDirection.ReturnValue);
+      outParam = AddOutputParamInner<T>(name, val, ParameterDirection.InputOutput);
+      return this;
+    }
+
+    public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam)
+    {
+      retParam = AddOutputParamInner<T>("_retParam", null, ParameterDirection.ReturnValue);
       return this;
     }
 
@@ -81,9 +87,9 @@ namespace StoredProcedureEFCore
       _cmd.Dispose();
     }
 
-    private OutputParam<T> AddOutputParamInner<T>(string name, ParameterDirection direction)
+    private OutputParam<T> AddOutputParamInner<T>(string name, object val, ParameterDirection direction)
     {
-      DbParameter param = AddParamInner(name, p =>
+      DbParameter param = AddParamInner(name, val, p =>
       {
         p.Direction = direction;
         p.DbType = DbTypeConverter.ConvertToDbType<T>();
@@ -92,10 +98,11 @@ namespace StoredProcedureEFCore
       return new OutputParam<T>(param);
     }
 
-    private DbParameter AddParamInner(string name, Action<DbParameter> action = null)
+    private DbParameter AddParamInner(string name, object val = null, Action<DbParameter> action = null)
     {
       DbParameter param = _cmd.CreateParameter();
       param.ParameterName = '@' + name;
+      param.Value = val;
       action?.Invoke(param);
       _cmd.Parameters.Add(param);
       return param;
