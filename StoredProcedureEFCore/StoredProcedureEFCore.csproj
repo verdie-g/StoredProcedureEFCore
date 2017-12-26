@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <Version>0.1.0</Version>
     <Authors>Grégoire Verdier</Authors>
-    <Company />
     <Description>Entity Framework Core extension to execute a stored procedure and map the result Edit</Description>
     <PackageProjectUrl>https://github.com/verdie-g/StoredProcedureEFCore</PackageProjectUrl>
     <ApplicationIcon />
@@ -14,15 +13,10 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.3.1" />
   </ItemGroup>
 
 </Project>
