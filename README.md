@@ -54,7 +54,7 @@ T                              Single<T>()
 ### IStoredProcBuilder
 ```csharp
 IStoredProcBuilder             AddParam(string name, object val)
-IStoredProcBuilder             AddInputOutputParam<T>(string name, T val, out OutParam<T> outParam);
+IStoredProcBuilder             AddInputOutputParam<T>(string name, T val, out OutParam<T> outParam)
 IStoredProcBuilder             AddOutParam<T>(string name, out IOutParam<T> outParam)
 IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam)
 void                           Exec(Action<IDataReader> action)
