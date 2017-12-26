@@ -2,11 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <Title>StoredProcedureEFCore</Title>
     <Version>0.1.0</Version>
     <Authors>Grégoire Verdier</Authors>
-    <Description>Entity Framework Core extension to execute a stored procedure and map the result Edit</Description>
+    <Description>Entity Framework Core extension to execute a stored procedure and map the result</Description>
+    <RepositoryUrl>https://github.com/verdie-g/StoredProcedureEFCore</RepositoryUrl>
     <PackageProjectUrl>https://github.com/verdie-g/StoredProcedureEFCore</PackageProjectUrl>
-    <ApplicationIcon />
+    <PackageLicenseUrl>https://raw.githubusercontent.com/verdie-g/StoredProcedureEFCore/develop/LICENSE</PackageLicenseUrl>
+    <PackageTags>C# Stored Procedure Entity Framework Core Mapping IDataReader</PackageTags>
+    <Copyright>Copyright 2017</Copyright>
     <OutputType>Library</OutputType>
     <StartupObject />
     <AssemblyName>StoredProcedureEFCore</AssemblyName>
