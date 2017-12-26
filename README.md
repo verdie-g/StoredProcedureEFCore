@@ -10,6 +10,8 @@ The method handles :
 - Underscores or hypens in result set column names ("column_name" is mapped to ColumnName property)
 - Int (db) to enumeration (result model) mapping
 
+## Example
+
 ```csharp
 List<Model> rows = null;
 
@@ -61,6 +63,10 @@ void                           Exec(Action<IDataReader> action)
 void                           ExecNonQuery()
 void                           ExecScalar<T>(out T val)
 ```
+
+## Installation
+
+` Install-Package StoredProcedureEFCore `
 
 ## Why ?
 
