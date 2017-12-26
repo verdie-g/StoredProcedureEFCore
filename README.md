@@ -56,7 +56,7 @@ T                              Single<T>()
 IStoredProcBuilder             AddParam(string name, object val)
 IStoredProcBuilder             AddInputOutputParam<T>(string name, T val, out OutParam<T> outParam);
 IStoredProcBuilder             AddOutParam<T>(string name, out IOutParam<T> outParam)
-IStoredProcBuilder             ReturnValue<T>(out IReturnParameter<T> retParam)
+IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam)
 void                           Exec(Action<IDataReader> action)
 void                           ExecNonQuery()
 void                           ExecScalar<T>(out T val)
