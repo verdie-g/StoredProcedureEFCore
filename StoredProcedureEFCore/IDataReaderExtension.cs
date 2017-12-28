@@ -150,10 +150,19 @@ namespace StoredProcedureEFCore
       return First<T>(reader, false, true);
     }
 
+    /// <summary>
+    /// Map reader's first row to a model or return default value if the result set is empty
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static T SingleOrDefault<T>(this IDataReader reader) where T : class
+    {
+      return First<T>(reader, true, true);
+    }
+
     private static T First<T>(IDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class
     {
-      Debug.Assert(orDefault || throwIfNotSingle);
-
       if (reader.Read())
       {
         PropertyInfo[] props = GetDataReaderColumns<T>(reader);
@@ -164,13 +173,11 @@ namespace StoredProcedureEFCore
 
         return row;
       }
-      else
-      {
-        if (orDefault)
-          return default(T);
 
-        throw new InvalidOperationException("Sequence contains no element");
-      }
+      if (orDefault)
+        return default(T);
+
+      throw new InvalidOperationException("Sequence contains no element");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -51,6 +51,7 @@ List<T>                        Column<T>()
 T                              First<T>()
 T                              FirstOrDefault<T>()
 T                              Single<T>()
+T                              SingleOrDefault<T>()
 ```
 
 ### IStoredProcBuilder
