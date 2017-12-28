@@ -160,7 +160,7 @@ namespace StoredProcedureEFCore
         T row = MapNextRow<T>(reader, props);
 
         if (throwIfNotSingle && reader.Read())
-          throw new Exception("Result set contains more than one row.");
+          throw new InvalidOperationException("Sequence contains more than one element");
 
         return row;
       }
@@ -169,7 +169,7 @@ namespace StoredProcedureEFCore
         if (orDefault)
           return default(T);
 
-        throw new Exception("Empty result set.");
+        throw new InvalidOperationException("Sequence contains no element");
       }
     }
 
