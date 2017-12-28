@@ -108,8 +108,6 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static HashSet<T> ToSet<T>(this IDataReader reader) where T : IComparable
     {
-      PropertyInfo[] props = GetDataReaderColumns<T>(reader);
-
       var res = new HashSet<T>();
       while (reader.Read())
       {
@@ -152,27 +150,34 @@ namespace StoredProcedureEFCore
       return First<T>(reader, false, true);
     }
 
+    /// <summary>
+    /// Map reader's first row to a model or return default value if the result set is empty
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static T SingleOrDefault<T>(this IDataReader reader) where T : class
+    {
+      return First<T>(reader, true, true);
+    }
+
     private static T First<T>(IDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class
     {
-      Debug.Assert(orDefault || throwIfNotSingle);
-
       if (reader.Read())
       {
         PropertyInfo[] props = GetDataReaderColumns<T>(reader);
         T row = MapNextRow<T>(reader, props);
 
         if (throwIfNotSingle && reader.Read())
-          throw new Exception("Result set contains more than one row.");
+          throw new InvalidOperationException("Sequence contains more than one element");
 
         return row;
       }
-      else
-      {
-        if (orDefault)
-          return default(T);
 
-        throw new Exception("Empty result set.");
-      }
+      if (orDefault)
+        return default(T);
+
+      throw new InvalidOperationException("Sequence contains no element");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -187,7 +192,7 @@ namespace StoredProcedureEFCore
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void SetPropertyValue<T>(IDataReader reader, PropertyInfo[] props, T row, int i)
+    private static void SetPropertyValue<T>(IDataReader reader, PropertyInfo[] props, T row, int i) where T : class
     {
       Debug.Assert(i >= 0 && i < reader.FieldCount);
 
@@ -198,7 +203,7 @@ namespace StoredProcedureEFCore
       props[i].SetValue(row, value);
     }
 
-    private static PropertyInfo[] GetDataReaderColumns<T>(IDataReader reader)
+    private static PropertyInfo[] GetDataReaderColumns<T>(IDataReader reader) where T : class
     {
       var res = new PropertyInfo[reader.FieldCount];
       Type modelType = typeof(T);

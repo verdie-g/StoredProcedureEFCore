@@ -54,7 +54,6 @@ namespace StoredProcedureEFCore.Tests
       resultSet.Contains(_testModelsCollection[1].Sb);
     }
 
-    /*
     [Fact]
     public void TestFirst()
     {
@@ -67,9 +66,8 @@ namespace StoredProcedureEFCore.Tests
     public void TestFirstOnEmpty()
     {
       IDataReader r = CreateFakeDataReader();
-      Assert.Throws<Exception>(() => r.First<TestModel>());
+      Assert.Throws<InvalidOperationException>(() => r.First<TestModel>());
     }
-    */
 
     [Fact]
     public void TestFirstOrDefault()
@@ -98,14 +96,36 @@ namespace StoredProcedureEFCore.Tests
     public void TestSingleOnEmpty()
     {
       IDataReader r = CreateFakeDataReader();
-      Assert.Throws<Exception>(() => r.Single<TestModel>());
+      Assert.Throws<InvalidOperationException>(() => r.Single<TestModel>());
     }
 
     [Fact]
     public void TestSingleOnNotSingle()
     {
       IDataReader r = CreateFakeDataReader(0, 1);
-      Assert.Throws<Exception>(() => r.Single<TestModel>());
+      Assert.Throws<InvalidOperationException>(() => r.Single<TestModel>());
+    }
+
+    [Fact]
+    public void TestSingleOrDefault()
+    {
+      IDataReader r = CreateFakeDataReader(0);
+      TestModel tm = r.SingleOrDefault<TestModel>();
+      TestModelEqual(tm, 0);
+    }
+
+    [Fact]
+    public void TestSingleOrDefaultOnEmpty()
+    {
+      IDataReader r = CreateFakeDataReader();
+      Assert.Null(r.SingleOrDefault<TestModel>());
+    }
+
+    [Fact]
+    public void TestSingleOrDefaultOnNotSingle()
+    {
+      IDataReader r = CreateFakeDataReader(0, 1);
+      Assert.Throws<InvalidOperationException>(() => r.SingleOrDefault<TestModel>());
     }
 
     [Fact]
@@ -123,7 +143,7 @@ namespace StoredProcedureEFCore.Tests
     public void TestColumn2()
     {
       IDataReader r = CreateFakeDataReader(0, 1);
-      List<ulong> col = r.Column<ulong>("Ul");
+      List<ulong> col = r.Column<ulong>(nameof(TestModel.Ul));
       Assert.Equal(col.Count, 2);
       Assert.Equal(col[0], _testModelsCollection[0].Ul);
       Assert.Equal(col[1], _testModelsCollection[1].Ul);
