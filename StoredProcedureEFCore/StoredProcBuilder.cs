@@ -22,19 +22,19 @@ namespace StoredProcedureEFCore
       _cmd = cmd;
     }
 
-    public IStoredProcBuilder AddParam(string name, object val)
+    public IStoredProcBuilder AddParam<T>(string name, T val)
     {
-      AddParamInner(name, val);
+      AddParamInner<T>(name, val, ParameterDirection.Input);
       return this;
     }
 
-    public IStoredProcBuilder AddOutputParam<T>(string name, out IOutParam<T> outParam)
+    public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner<T>(name, null, ParameterDirection.Output);
+      outParam = AddOutputParamInner<T>(name, default(T), ParameterDirection.Output);
       return this;
     }
 
-    public IStoredProcBuilder AddInputOutputParam<T>(string name, T val, out IOutParam<T> outParam)
+    public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam)
     {
       outParam = AddOutputParamInner<T>(name, val, ParameterDirection.InputOutput);
       return this;
@@ -42,7 +42,7 @@ namespace StoredProcedureEFCore
 
     public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam)
     {
-      retParam = AddOutputParamInner<T>("_retParam", null, ParameterDirection.ReturnValue);
+      retParam = AddOutputParamInner<T>("_retParam", default(T), ParameterDirection.ReturnValue);
       return this;
     }
 
@@ -93,18 +93,13 @@ namespace StoredProcedureEFCore
       _cmd.Dispose();
     }
 
-    private OutputParam<T> AddOutputParamInner<T>(string name, object val, ParameterDirection direction)
+    private OutputParam<T> AddOutputParamInner<T>(string name, T val, ParameterDirection direction)
     {
-      DbParameter param = AddParamInner(name, val, p =>
-      {
-        p.Direction = direction;
-        p.DbType = DbTypeConverter.ConvertToDbType<T>();
-      });
-
+      DbParameter param = AddParamInner(name, val, direction);
       return new OutputParam<T>(param);
     }
 
-    private DbParameter AddParamInner(string name, object val = null, Action<DbParameter> action = null)
+    private DbParameter AddParamInner<T>(string name, T val, ParameterDirection direction)
     {
       if (name is null)
         throw new ArgumentNullException(nameof(name));
@@ -112,7 +107,9 @@ namespace StoredProcedureEFCore
       DbParameter param = _cmd.CreateParameter();
       param.ParameterName = '@' + name;
       param.Value = val;
-      action?.Invoke(param);
+      param.Direction = direction;
+      param.DbType = DbTypeConverter.ConvertToDbType<T>();
+
       _cmd.Parameters.Add(param);
       return param;
     }

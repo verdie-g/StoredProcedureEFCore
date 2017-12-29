@@ -9,36 +9,37 @@ namespace StoredProcedureEFCore
   public interface IStoredProcBuilder : IDisposable
   {
     /// <summary>
-    /// Add parameter
+    /// Add input parameter
     /// </summary>
+    /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
     /// <param name="val">Value of the parameter</param>
     /// <returns></returns>
-    IStoredProcBuilder AddParam(string name, object val);
+    IStoredProcBuilder AddParam<T>(string name, T val);
 
     /// <summary>
-    /// Add in/out parameter
+    /// Add input/output parameter
     /// </summary>
-    /// <typeparam name="T">Type of the parameter</typeparam>
+    /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
     /// <param name="val">Value of the parameter</param>
     /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
     /// <returns></returns>
-    IStoredProcBuilder AddInputOutputParam<T>(string name, T val, out IOutParam<T> outParam);
+    IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam);
 
     /// <summary>
-    /// Add out parameter
+    /// Add output parameter
     /// </summary>
-    /// <typeparam name="T">Type of the parameter</typeparam>
+    /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
     /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
     /// <returns></returns>
-    IStoredProcBuilder AddOutputParam<T>(string name, out IOutParam<T> outParam);
+    IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam);
 
     /// <summary>
     /// Add return value parameter
     /// </summary>
-    /// <typeparam name="T">Type of the parameter</typeparam>
+    /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="retParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam);

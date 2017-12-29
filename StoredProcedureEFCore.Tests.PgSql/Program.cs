@@ -13,7 +13,7 @@ namespace StoredProcedureEFCore.Tests.PgSql
       List<Model> rows = null;
 
       ctx.LoadStoredProc("public.listall")
-         .AddParam("llimit", 300)
+         .AddParam("llimit", 300L)
          // .AddOutputParam("limitOut", out IOutputParam<long> limitOut)
          .Exec(r => rows = r.ToList<Model>());
 
@@ -25,7 +25,7 @@ namespace StoredProcedureEFCore.Tests.PgSql
       bool b = retParam.Value;
 
       ctx.LoadStoredProc("public.ListAll")
-         .AddParam("limit", 1)
+         .AddParam("limit", 1L)
          .ExecScalar(out long l);
 
       Console.WriteLine(l);
