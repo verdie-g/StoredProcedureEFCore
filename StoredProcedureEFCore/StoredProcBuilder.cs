@@ -105,7 +105,7 @@ namespace StoredProcedureEFCore
         throw new ArgumentNullException(nameof(name));
 
       DbParameter param = _cmd.CreateParameter();
-      param.ParameterName = '@' + name;
+      param.ParameterName = name;
       param.Value = val;
       param.Direction = direction;
       param.DbType = DbTypeConverter.ConvertToDbType<T>();
