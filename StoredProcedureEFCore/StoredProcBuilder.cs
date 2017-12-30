@@ -46,14 +46,14 @@ namespace StoredProcedureEFCore
       return this;
     }
 
-    public void Exec(Action<IDataReader> action)
+    public void Exec(Action<DbDataReader> action)
     {
       if (action is null)
         throw new ArgumentNullException(nameof(action));
 
       try
       {
-        using (IDataReader r = _cmd.ExecuteReader())
+        using (DbDataReader r = _cmd.ExecuteReader())
         {
           action(r);
         }

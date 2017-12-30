@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 
 namespace StoredProcedureEFCore
 {
@@ -23,7 +24,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
     /// <param name="val">Value of the parameter</param>
-    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
+    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam);
 
@@ -32,7 +33,7 @@ namespace StoredProcedureEFCore
     /// </summary>
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
-    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
+    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam);
 
@@ -40,7 +41,7 @@ namespace StoredProcedureEFCore
     /// Add return value parameter
     /// </summary>
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
-    /// <param name="retParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{IDataReader})"/></param>
+    /// <param name="retParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam);
 
@@ -48,7 +49,7 @@ namespace StoredProcedureEFCore
     /// Execute the stored procedure
     /// </summary>
     /// <param name="action">Actions to do with the result sets</param>
-    void Exec(Action<IDataReader> action);
+    void Exec(Action<DbDataReader> action);
 
     /// <summary>
     /// Execute the stored procedure

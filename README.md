@@ -60,7 +60,7 @@ IStoredProcBuilder             AddParam<T>(string name, T val)                  
 IStoredProcBuilder             AddParam<T>(string name, T val, out OutParam<T> outParam)   // Ouput parameter
 IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam)         // Input/Ouput parameter
 IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam)
-void                           Exec(Action<IDataReader> action)
+void                           Exec(Action<DbDataReader> action)
 void                           ExecNonQuery()
 void                           ExecScalar<T>(out T val)
 ```
