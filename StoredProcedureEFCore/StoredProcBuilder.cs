@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace StoredProcedureEFCore
 {
@@ -17,7 +18,6 @@ namespace StoredProcedureEFCore
       DbCommand cmd = ctx.Database.GetDbConnection().CreateCommand();
       cmd.CommandType = CommandType.StoredProcedure;
       cmd.CommandText = name;
-      ctx.Database.OpenConnection();
 
       _cmd = cmd;
     }
@@ -53,7 +53,27 @@ namespace StoredProcedureEFCore
 
       try
       {
+        OpenConnection();
         using (DbDataReader r = _cmd.ExecuteReader())
+        {
+          action(r);
+        }
+      }
+      finally
+      {
+        Dispose();
+      }
+    }
+
+    public async Task ExecAsync(Action<DbDataReader> action)
+    {
+      if (action is null)
+        throw new ArgumentNullException(nameof(action));
+
+      try
+      {
+        await OpenConnectionAsync();
+        using (DbDataReader r = await _cmd.ExecuteReaderAsync())
         {
           action(r);
         }
@@ -68,7 +88,21 @@ namespace StoredProcedureEFCore
     {
       try
       {
+        OpenConnection();
         _cmd.ExecuteNonQuery();
+      }
+      finally
+      {
+        Dispose();
+      }
+    }
+
+    public async Task ExecNonQueryAsync()
+    {
+      try
+      {
+        await OpenConnectionAsync();
+        await _cmd.ExecuteNonQueryAsync();
       }
       finally
       {
@@ -80,7 +114,22 @@ namespace StoredProcedureEFCore
     {
       try
       {
+        OpenConnection();
         val = (T)_cmd.ExecuteScalar();
+      }
+      finally
+      {
+        Dispose();
+      }
+    }
+
+    public async Task ExecScalarAsync<T>(Action<T> action)
+    {
+      try
+      {
+        await OpenConnectionAsync();
+        T val = (T)await _cmd.ExecuteScalarAsync();
+        action(val);
       }
       finally
       {
@@ -90,6 +139,7 @@ namespace StoredProcedureEFCore
 
     public void Dispose()
     {
+      _cmd.Connection.Close();
       _cmd.Dispose();
     }
 
@@ -112,6 +162,18 @@ namespace StoredProcedureEFCore
 
       _cmd.Parameters.Add(param);
       return param;
+    }
+
+    private void OpenConnection()
+    {
+      // if (_cmd.Connection.State == ConnectionState.Closed)
+      _cmd.Connection.Open();
+    }
+
+    private async Task OpenConnectionAsync()
+    {
+      // if (_cmd.Connection.State == ConnectionState.Closed)
+      await _cmd.Connection.OpenAsync();
     }
   }
 }

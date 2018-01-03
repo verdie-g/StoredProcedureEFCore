@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Data;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace StoredProcedureEFCore
 {
@@ -54,7 +54,18 @@ namespace StoredProcedureEFCore
     /// <summary>
     /// Execute the stored procedure
     /// </summary>
+    /// <param name="action">Actions to do with the result sets</param>
+    Task ExecAsync(Action<DbDataReader> action);
+
+    /// <summary>
+    /// Execute the stored procedure
+    /// </summary>
     void ExecNonQuery();
+
+    /// <summary>
+    /// Execute the stored procedure
+    /// </summary>
+    Task ExecNonQueryAsync();
 
     /// <summary>
     /// Execute the stored procedure and return the first column of the first row
@@ -63,5 +74,13 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T"></typeparam>
     /// <param name="val"></param>
     void ExecScalar<T>(out T val);
+
+    /// <summary>
+    /// Execute the stored procedure and return the first column of the first row
+    /// </summary>
+    /// </summary>
+    /// <typeparam name="T">Type of the scalar value</param>
+    /// <param name="action">Action with the scalar value</param>
+    Task ExecScalarAsync<T>(Action<T> action);
   }
 }
