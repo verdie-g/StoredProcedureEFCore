@@ -7,7 +7,7 @@ The method handles :
 - Extra column in result set
 - Extra property in model
 - Null values in result set
-- Underscores or hypens in result set column names ("column_name" is mapped to ColumnName property)
+- Underscores in result set column names ("column_name" is mapped to ColumnName property)
 - Int (db) to enumeration (result model) mapping
 
 ## Example
