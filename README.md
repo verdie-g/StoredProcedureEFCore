@@ -16,21 +16,21 @@ The method handles :
 List<Model> rows = null;
 
 ctx.LoadStoredProc("dbo.ListAll")
-   .AddParam<T>("limit", 300L)
-   .AddParam<T>("limitOut", out IOutParam<long> limitOut)
+   .AddParam("limit", 300L)
+   .AddParam("limitOut", out IOutParam<long> limitOut)
    .Exec(r => rows = r.ToList<Model>());
 
 long limitOutValue = limitOut.Value;
 
 ctx.LoadStoredProc("dbo.ReturnBoolean")
-   .AddParam<T>("boolean_to_return", true)
+   .AddParam("boolean_to_return", true)
    .ReturnValue(out IOutParam<bool> retParam)
    .ExecNonQuery();
 
 bool b = retParam.Value;
 
 ctx.LoadStoredProc("dbo.ListAll")
-   .AddParam<T>("limit", 1L)
+   .AddParam("limit", 1L)
    .ExecScalar(out long l);
 ```
 
@@ -41,7 +41,7 @@ ctx.LoadStoredProc("dbo.ListAll")
 IStoredProcBuilder             LoadStoredProc(string name)
 ```
 
-### IDataReader
+### DbDataReader
 ```csharp
 List<T>                        ToList<T>()
 Dictionary<TKey, TValue>       ToDictionary<TKey, TValue>()
@@ -57,8 +57,8 @@ T                              SingleOrDefault<T>()
 ### IStoredProcBuilder
 ```csharp
 IStoredProcBuilder             AddParam<T>(string name, T val)                             // Input parameter
-IStoredProcBuilder             AddParam<T>(string name, T val, out OutParam<T> outParam)   // Ouput parameter
-IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam)         // Input/Ouput parameter
+IStoredProcBuilder             AddParam<T>(string name, T val, out OutParam<T> outParam)   // Input/Ouput parameter
+IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam)         // Ouput parameter
 IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam)
 void                           Exec(Action<DbDataReader> action)
 void                           ExecNonQuery()

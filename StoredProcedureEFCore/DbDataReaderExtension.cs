@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace StoredProcedureEFCore
 {
-  public static class IDataReaderExtension
+  public static class DbDataReaderExtension
   {
     /// <summary>
     /// Map reader to a model list
@@ -16,7 +16,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static List<T> ToList<T>(this IDataReader reader) where T : class, new()
+    public static List<T> ToList<T>(this DbDataReader reader) where T : class, new()
     {
       var res = new List<T>();
       PropertyInfo[] props = GetDataReaderColumns<T>(reader);
@@ -35,7 +35,7 @@ namespace StoredProcedureEFCore
     /// <param name="reader"></param>
     /// <param name="columnName">Name of the column to read</param>
     /// <returns></returns>
-    public static List<T> Column<T>(this IDataReader reader, string columnName = null) where T : IComparable
+    public static List<T> Column<T>(this DbDataReader reader, string columnName = null) where T : IComparable
     {
       int ord = columnName == null ? 0 : reader.GetOrdinal(columnName);
 
@@ -55,7 +55,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="TValue">Type of the values</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class, new()
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this DbDataReader reader) where TKey : IComparable where TValue : class, new()
     {
       PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
 
@@ -77,7 +77,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="TValue">Type of the values</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(this IDataReader reader) where TKey : IComparable where TValue : class, new()
+    public static Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(this DbDataReader reader) where TKey : IComparable where TValue : class, new()
     {
       PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
 
@@ -106,7 +106,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T"></typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static HashSet<T> ToSet<T>(this IDataReader reader) where T : IComparable
+    public static HashSet<T> ToSet<T>(this DbDataReader reader) where T : IComparable
     {
       var res = new HashSet<T>();
       while (reader.Read())
@@ -123,7 +123,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static T First<T>(this IDataReader reader) where T : class, new()
+    public static T First<T>(this DbDataReader reader) where T : class, new()
     {
       return First<T>(reader, false, false);
     }
@@ -134,7 +134,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static T FirstOrDefault<T>(this IDataReader reader) where T : class, new()
+    public static T FirstOrDefault<T>(this DbDataReader reader) where T : class, new()
     {
       return First<T>(reader, true, false);
     }
@@ -145,7 +145,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static T Single<T>(this IDataReader reader) where T : class, new()
+    public static T Single<T>(this DbDataReader reader) where T : class, new()
     {
       return First<T>(reader, false, true);
     }
@@ -156,12 +156,12 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static T SingleOrDefault<T>(this IDataReader reader) where T : class, new()
+    public static T SingleOrDefault<T>(this DbDataReader reader) where T : class, new()
     {
       return First<T>(reader, true, true);
     }
 
-    private static T First<T>(IDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class, new()
+    private static T First<T>(DbDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class, new()
     {
       if (reader.Read())
       {
@@ -181,7 +181,7 @@ namespace StoredProcedureEFCore
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static T MapNextRow<T>(IDataReader reader, PropertyInfo[] props, int columnOffset = 0) where T : class, new()
+    private static T MapNextRow<T>(DbDataReader reader, PropertyInfo[] props, int columnOffset = 0) where T : class, new()
     {
       T row = new T();
       for (int i = columnOffset; i < reader.FieldCount; i++)
@@ -192,7 +192,7 @@ namespace StoredProcedureEFCore
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void SetPropertyValue<T>(IDataReader reader, PropertyInfo[] props, T row, int i) where T : class, new()
+    private static void SetPropertyValue<T>(DbDataReader reader, PropertyInfo[] props, T row, int i) where T : class, new()
     {
       Debug.Assert(i >= 0 && i < reader.FieldCount);
 
@@ -203,7 +203,7 @@ namespace StoredProcedureEFCore
       props[i].SetValue(row, value);
     }
 
-    private static PropertyInfo[] GetDataReaderColumns<T>(IDataReader reader) where T : class, new()
+    private static PropertyInfo[] GetDataReaderColumns<T>(DbDataReader reader) where T : class, new()
     {
       var res = new PropertyInfo[reader.FieldCount];
       Type modelType = typeof(T);
