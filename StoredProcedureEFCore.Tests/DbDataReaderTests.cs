@@ -22,7 +22,7 @@ namespace StoredProcedureEFCore.Tests
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
       List<TestModel> resultSet = mock.ToList<TestModel>();
-      Assert.Equal(resultSet.Count, 2);
+      Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[0], 0);
       TestModelEqual(resultSet[1], 1);
     }
@@ -32,7 +32,7 @@ namespace StoredProcedureEFCore.Tests
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
       Dictionary<sbyte, TestModel> resultSet = mock.ToDictionary<sbyte, TestModel>();
-      Assert.Equal(resultSet.Count, 2);
+      Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[_testModelsCollection[0].Sb], 0);
       TestModelEqual(resultSet[_testModelsCollection[1].Sb], 1);
     }
@@ -42,7 +42,7 @@ namespace StoredProcedureEFCore.Tests
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
       Dictionary<sbyte, List<TestModel>> resultSet = mock.ToLookup<sbyte, TestModel>();
-      Assert.Equal(resultSet.Count, 2);
+      Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[_testModelsCollection[0].Sb][0], 0);
       TestModelEqual(resultSet[_testModelsCollection[1].Sb][0], 1);
     }
@@ -52,7 +52,7 @@ namespace StoredProcedureEFCore.Tests
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
       HashSet<sbyte> resultSet = mock.ToSet<sbyte>();
-      Assert.Equal(resultSet.Count, 2);
+      Assert.Equal(2, resultSet.Count);
       resultSet.Contains(_testModelsCollection[0].Sb);
       resultSet.Contains(_testModelsCollection[1].Sb);
     }
@@ -136,7 +136,7 @@ namespace StoredProcedureEFCore.Tests
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
       List<sbyte> col = mock.Column<sbyte>();
-      Assert.Equal(col.Count, 2);
+      Assert.Equal(2, col.Count);
       Assert.Equal(col[0], _testModelsCollection[0].Sb);
       Assert.Equal(col[1], _testModelsCollection[1].Sb);
     }
@@ -147,7 +147,7 @@ namespace StoredProcedureEFCore.Tests
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
       List<ulong> col = mock.Column<ulong>(nameof(TestModel.Ul));
-      Assert.Equal(col.Count, 2);
+      Assert.Equal(2, col.Count);
       Assert.Equal(col[0], _testModelsCollection[0].Ul);
       Assert.Equal(col[1], _testModelsCollection[1].Ul);
     }
