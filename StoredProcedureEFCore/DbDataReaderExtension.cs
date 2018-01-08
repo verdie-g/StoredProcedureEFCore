@@ -403,9 +403,8 @@ namespace StoredProcedureEFCore
       Type modelType = typeof(T);
       for (int i = 0; i < reader.FieldCount; i++)
       {
-        string name = reader.GetName(i);
-        string nameNoUnderscore = Regex.Replace(name, "[_-]", "");
-        res[i] = modelType.GetProperty(nameNoUnderscore, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        string name = reader.GetName(i).Replace("_", "");
+        res[i] = modelType.GetProperty(name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
       }
       return res;
     }
