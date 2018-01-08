@@ -1,12 +1,15 @@
+using Moq;
+using Moq.DataReader;
+using StoredProcedureEFCore;
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Xunit;
 
 namespace StoredProcedureEFCore.Tests
 {
-  public class IDataReaderTests
+  public class DbDataReaderTests
   {
     private List<TestModel> _testModelsCollection = new List<TestModel>()
     {
@@ -17,9 +20,9 @@ namespace StoredProcedureEFCore.Tests
     [Fact]
     public void TestToList()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      List<TestModel> resultSet = r.ToList<TestModel>();
-      Assert.Equal(resultSet.Count, 2);
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      List<TestModel> resultSet = mock.ToList<TestModel>();
+      Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[0], 0);
       TestModelEqual(resultSet[1], 1);
     }
@@ -27,9 +30,9 @@ namespace StoredProcedureEFCore.Tests
     [Fact]
     public void TestToDictionary()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      Dictionary<sbyte, TestModel> resultSet = r.ToDictionary<sbyte, TestModel>();
-      Assert.Equal(resultSet.Count, 2);
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      Dictionary<sbyte, TestModel> resultSet = mock.ToDictionary<sbyte, TestModel>();
+      Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[_testModelsCollection[0].Sb], 0);
       TestModelEqual(resultSet[_testModelsCollection[1].Sb], 1);
     }
@@ -37,9 +40,9 @@ namespace StoredProcedureEFCore.Tests
     [Fact]
     public void TestToLookup()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      Dictionary<sbyte, List<TestModel>> resultSet = r.ToLookup<sbyte, TestModel>();
-      Assert.Equal(resultSet.Count, 2);
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      Dictionary<sbyte, List<TestModel>> resultSet = mock.ToLookup<sbyte, TestModel>();
+      Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[_testModelsCollection[0].Sb][0], 0);
       TestModelEqual(resultSet[_testModelsCollection[1].Sb][0], 1);
     }
@@ -47,9 +50,9 @@ namespace StoredProcedureEFCore.Tests
     [Fact]
     public void TestToSet()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      HashSet<sbyte> resultSet = r.ToSet<sbyte>();
-      Assert.Equal(resultSet.Count, 2);
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      HashSet<sbyte> resultSet = mock.ToSet<sbyte>();
+      Assert.Equal(2, resultSet.Count);
       resultSet.Contains(_testModelsCollection[0].Sb);
       resultSet.Contains(_testModelsCollection[1].Sb);
     }
@@ -57,83 +60,83 @@ namespace StoredProcedureEFCore.Tests
     [Fact]
     public void TestFirst()
     {
-      IDataReader r = CreateFakeDataReader(0);
-      TestModel tm = r.First<TestModel>();
+      DbDataReader mock = CreateDataReaderMock(0).Object;
+      TestModel tm = mock.First<TestModel>();
       TestModelEqual(tm, 0);
     }
 
     [Fact]
     public void TestFirstOnEmpty()
     {
-      IDataReader r = CreateFakeDataReader();
-      Assert.Throws<InvalidOperationException>(() => r.First<TestModel>());
+      DbDataReader mock = CreateDataReaderMock().Object;
+      Assert.Throws<InvalidOperationException>(() => mock.First<TestModel>());
     }
 
     [Fact]
     public void TestFirstOrDefault()
     {
-      IDataReader r = CreateFakeDataReader(0);
-      TestModel tm = r.FirstOrDefault<TestModel>();
+      DbDataReader mock = CreateDataReaderMock(0).Object;
+      TestModel tm = mock.FirstOrDefault<TestModel>();
       TestModelEqual(tm, 0);
     }
 
     [Fact]
     public void TestFirstOrDefaultOnEmpty()
     {
-      IDataReader r = CreateFakeDataReader();
-      Assert.Null(r.FirstOrDefault<TestModel>());
+      DbDataReader mock = CreateDataReaderMock().Object;
+      Assert.Null(mock.FirstOrDefault<TestModel>());
     }
 
     [Fact]
     public void TestSingle()
     {
-      IDataReader r = CreateFakeDataReader(0);
-      TestModel tm = r.Single<TestModel>();
+      DbDataReader mock = CreateDataReaderMock(0).Object;
+      TestModel tm = mock.Single<TestModel>();
       TestModelEqual(tm, 0);
     }
 
     [Fact]
     public void TestSingleOnEmpty()
     {
-      IDataReader r = CreateFakeDataReader();
-      Assert.Throws<InvalidOperationException>(() => r.Single<TestModel>());
+      DbDataReader mock = CreateDataReaderMock().Object;
+      Assert.Throws<InvalidOperationException>(() => mock.Single<TestModel>());
     }
 
     [Fact]
     public void TestSingleOnNotSingle()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      Assert.Throws<InvalidOperationException>(() => r.Single<TestModel>());
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      Assert.Throws<InvalidOperationException>(() => mock.Single<TestModel>());
     }
 
     [Fact]
     public void TestSingleOrDefault()
     {
-      IDataReader r = CreateFakeDataReader(0);
-      TestModel tm = r.SingleOrDefault<TestModel>();
+      DbDataReader mock = CreateDataReaderMock(0).Object;
+      TestModel tm = mock.SingleOrDefault<TestModel>();
       TestModelEqual(tm, 0);
     }
 
     [Fact]
     public void TestSingleOrDefaultOnEmpty()
     {
-      IDataReader r = CreateFakeDataReader();
-      Assert.Null(r.SingleOrDefault<TestModel>());
+      DbDataReader mock = CreateDataReaderMock().Object;
+      Assert.Null(mock.SingleOrDefault<TestModel>());
     }
 
     [Fact]
     public void TestSingleOrDefaultOnNotSingle()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      Assert.Throws<InvalidOperationException>(() => r.SingleOrDefault<TestModel>());
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      Assert.Throws<InvalidOperationException>(() => mock.SingleOrDefault<TestModel>());
     }
 
     [Fact]
     public void TestColumn()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      List<sbyte> col = r.Column<sbyte>();
-      Assert.Equal(col.Count, 2);
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      List<sbyte> col = mock.Column<sbyte>();
+      Assert.Equal(2, col.Count);
       Assert.Equal(col[0], _testModelsCollection[0].Sb);
       Assert.Equal(col[1], _testModelsCollection[1].Sb);
     }
@@ -142,9 +145,9 @@ namespace StoredProcedureEFCore.Tests
     [Fact]
     public void TestColumn2()
     {
-      IDataReader r = CreateFakeDataReader(0, 1);
-      List<ulong> col = r.Column<ulong>(nameof(TestModel.Ul));
-      Assert.Equal(col.Count, 2);
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      List<ulong> col = mock.Column<ulong>(nameof(TestModel.Ul));
+      Assert.Equal(2, col.Count);
       Assert.Equal(col[0], _testModelsCollection[0].Ul);
       Assert.Equal(col[1], _testModelsCollection[1].Ul);
     }
@@ -170,10 +173,12 @@ namespace StoredProcedureEFCore.Tests
       Assert.Equal(tm1.En, tm2.En);
     }
 
-    private IDataReader CreateFakeDataReader(params int[] indexes)
+    private Mock<DbDataReader> CreateDataReaderMock(params int[] indexes)
     {
-      IEnumerable<TestModel> data = indexes.Select(i => (TestModel)_testModelsCollection[i].Clone());
-      return new EnumerableDataReader<TestModel>(data);
+      List<TestModel> data = indexes.Select(i => (TestModel)_testModelsCollection[i].Clone()).ToList();
+      var mock = new Mock<DbDataReader>();
+      mock.SetupDataReader(data);
+      return mock;
     }
   }
 }
