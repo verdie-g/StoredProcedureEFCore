@@ -55,7 +55,7 @@ namespace StoredProcedureEFCore
     /// Execute the stored procedure
     /// </summary>
     /// <param name="action">Actions to do with the result sets</param>
-    Task ExecAsync(Action<DbDataReader> action);
+    Task ExecAsync(Func<DbDataReader, Task> action);
 
     /// <summary>
     /// Execute the stored procedure

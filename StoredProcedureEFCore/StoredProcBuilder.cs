@@ -65,7 +65,7 @@ namespace StoredProcedureEFCore
       }
     }
 
-    public async Task ExecAsync(Action<DbDataReader> action)
+    public async Task ExecAsync(Func<DbDataReader, Task> action)
     {
       if (action is null)
         throw new ArgumentNullException(nameof(action));
@@ -75,7 +75,7 @@ namespace StoredProcedureEFCore
         await OpenConnectionAsync();
         using (DbDataReader r = await _cmd.ExecuteReaderAsync())
         {
-          action(r);
+          await action(r);
         }
       }
       finally
