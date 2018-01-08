@@ -166,13 +166,11 @@ namespace StoredProcedureEFCore
 
     private void OpenConnection()
     {
-      // if (_cmd.Connection.State == ConnectionState.Closed)
       _cmd.Connection.Open();
     }
 
     private async Task OpenConnectionAsync()
     {
-      // if (_cmd.Connection.State == ConnectionState.Closed)
       await _cmd.Connection.OpenAsync();
     }
   }
