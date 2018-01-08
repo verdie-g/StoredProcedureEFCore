@@ -334,7 +334,7 @@ namespace StoredProcedureEFCore
 
     private static async Task<T> FirstAsync<T>(DbDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class, new()
     {
-      if (reader.Read())
+      if (await reader.ReadAsync())
       {
         PropertyInfo[] props = GetDataReaderColumns<T>(reader);
         T row = await MapNextRowAsync<T>(reader, props);
