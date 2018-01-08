@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace StoredProcedureEFCore
 {
@@ -17,7 +18,6 @@ namespace StoredProcedureEFCore
       DbCommand cmd = ctx.Database.GetDbConnection().CreateCommand();
       cmd.CommandType = CommandType.StoredProcedure;
       cmd.CommandText = name;
-      ctx.Database.OpenConnection();
 
       _cmd = cmd;
     }
@@ -46,16 +46,36 @@ namespace StoredProcedureEFCore
       return this;
     }
 
-    public void Exec(Action<IDataReader> action)
+    public void Exec(Action<DbDataReader> action)
     {
       if (action is null)
         throw new ArgumentNullException(nameof(action));
 
       try
       {
-        using (IDataReader r = _cmd.ExecuteReader())
+        OpenConnection();
+        using (DbDataReader r = _cmd.ExecuteReader())
         {
           action(r);
+        }
+      }
+      finally
+      {
+        Dispose();
+      }
+    }
+
+    public async Task ExecAsync(Func<DbDataReader, Task> action)
+    {
+      if (action is null)
+        throw new ArgumentNullException(nameof(action));
+
+      try
+      {
+        await OpenConnectionAsync();
+        using (DbDataReader r = await _cmd.ExecuteReaderAsync())
+        {
+          await action(r);
         }
       }
       finally
@@ -68,7 +88,21 @@ namespace StoredProcedureEFCore
     {
       try
       {
+        OpenConnection();
         _cmd.ExecuteNonQuery();
+      }
+      finally
+      {
+        Dispose();
+      }
+    }
+
+    public async Task ExecNonQueryAsync()
+    {
+      try
+      {
+        await OpenConnectionAsync();
+        await _cmd.ExecuteNonQueryAsync();
       }
       finally
       {
@@ -80,7 +114,22 @@ namespace StoredProcedureEFCore
     {
       try
       {
+        OpenConnection();
         val = (T)_cmd.ExecuteScalar();
+      }
+      finally
+      {
+        Dispose();
+      }
+    }
+
+    public async Task ExecScalarAsync<T>(Action<T> action)
+    {
+      try
+      {
+        await OpenConnectionAsync();
+        T val = (T)await _cmd.ExecuteScalarAsync();
+        action(val);
       }
       finally
       {
@@ -90,6 +139,7 @@ namespace StoredProcedureEFCore
 
     public void Dispose()
     {
+      _cmd.Connection.Close();
       _cmd.Dispose();
     }
 
@@ -112,6 +162,16 @@ namespace StoredProcedureEFCore
 
       _cmd.Parameters.Add(param);
       return param;
+    }
+
+    private void OpenConnection()
+    {
+      _cmd.Connection.Open();
+    }
+
+    private async Task OpenConnectionAsync()
+    {
+      await _cmd.Connection.OpenAsync();
     }
   }
 }

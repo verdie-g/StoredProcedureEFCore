@@ -1,7 +1,8 @@
  # Execute stored procedures with Entity Framework Core
 
 DbContext extension with *LoadStoredProc* method which creates
-an IStoredProcBuilder.
+an IStoredProcBuilder to build a stored procedure with a custom
+mapping strategy using the provided DbDataReader extension.
 
 The method handles :
 - Extra column in result set
@@ -16,21 +17,21 @@ The method handles :
 List<Model> rows = null;
 
 ctx.LoadStoredProc("dbo.ListAll")
-   .AddParam<T>("limit", 300L)
-   .AddParam<T>("limitOut", out IOutParam<long> limitOut)
+   .AddParam("limit", 300L)
+   .AddParam("limitOut", out IOutParam<long> limitOut)
    .Exec(r => rows = r.ToList<Model>());
 
 long limitOutValue = limitOut.Value;
 
 ctx.LoadStoredProc("dbo.ReturnBoolean")
-   .AddParam<T>("boolean_to_return", true)
+   .AddParam("boolean_to_return", true)
    .ReturnValue(out IOutParam<bool> retParam)
    .ExecNonQuery();
 
 bool b = retParam.Value;
 
 ctx.LoadStoredProc("dbo.ListAll")
-   .AddParam<T>("limit", 1L)
+   .AddParam("limit", 1L)
    .ExecScalar(out long l);
 ```
 
@@ -41,28 +42,40 @@ ctx.LoadStoredProc("dbo.ListAll")
 IStoredProcBuilder             LoadStoredProc(string name)
 ```
 
-### IDataReader
+### DbDataReader
 ```csharp
-List<T>                        ToList<T>()
-Dictionary<TKey, TValue>       ToDictionary<TKey, TValue>()
-Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>()
-HashSet<T>                     ToSet<T>()
-List<T>                        Column<T>()
-T                              First<T>()
-T                              FirstOrDefault<T>()
-T                              Single<T>()
-T                              SingleOrDefault<T>()
+List<T>                              ToList<T>()
+Task<List<T>>                        ToListAsync<T>()
+Dictionary<TKey, TValue>             ToDictionary<TKey, TValue>()
+Task<Dictionary<TKey, TValue>>       ToDictionaryAsync<TKey, TValue>()
+Dictionary<TKey, List<TValue>>       ToLookup<TKey, TValue>()
+Task<Dictionary<TKey, List<TValue>>> ToLookupAsync<TKey, TValue>()
+HashSet<T>                           ToSet<T>()
+Task<HashSet<T>>                     ToSetAsync<T>()
+List<T>                              Column<T>(string columnName = null)
+Task<List<T>>                        ColumnAsync<T>(string columnName = null)
+T                                    First<T>()
+Task<T>                              FirstAsync<T>()
+T                                    FirstOrDefault<T>()
+Task<T>                              FirstOrDefaultAsync<T>()
+T                                    Single<T>()
+Task<T>                              SingleAsync<T>()
+T                                    SingleOrDefault<T>()
+Task<T>                              SingleOrDefaultAsync<T>()
 ```
 
 ### IStoredProcBuilder
 ```csharp
-IStoredProcBuilder             AddParam<T>(string name, T val)                             // Input parameter
-IStoredProcBuilder             AddParam<T>(string name, T val, out OutParam<T> outParam)   // Ouput parameter
-IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam)         // Input/Ouput parameter
-IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam)
-void                           Exec(Action<IDataReader> action)
-void                           ExecNonQuery()
-void                           ExecScalar<T>(out T val)
+IStoredProcBuilder                   AddParam<T>(string name, T val)                             // Input parameter
+IStoredProcBuilder                   AddParam<T>(string name, T val, out OutParam<T> outParam)   // Input/Ouput parameter
+IStoredProcBuilder                   AddParam<T>(string name, out IOutParam<T> outParam)         // Ouput parameter
+IStoredProcBuilder                   ReturnValue<T>(out IOutParam<T> retParam)
+void                                 Exec(Action<DbDataReader> action)
+Task                                 ExecAsync(Func<DbDataReader, Task> action)
+void                                 ExecNonQuery()
+Task                                 ExecNonQueryAsync()
+void                                 ExecScalar<T>(out T val)
+Task                                 ExecScalarAsync<T>(Action<T> action)
 ```
 
 ## Installation
