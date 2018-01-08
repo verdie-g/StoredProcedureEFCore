@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace StoredProcedureEFCore
@@ -48,43 +47,51 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map the first or the specified column to a list
+    /// Map the first column to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
-    /// <param name="columnName">Name of the column to read</param>
     /// <returns></returns>
-    public static List<T> Column<T>(this DbDataReader reader, string columnName = null) where T : IComparable
+    public static List<T> Column<T>(this DbDataReader reader) where T : IComparable
     {
-      int ord = columnName == null ? 0 : reader.GetOrdinal(columnName);
-
-      var res = new List<T>();
-      while (reader.Read())
-      {
-        T value = reader.IsDBNull(ord) ? default(T) : (T)reader.GetValue(ord);
-        res.Add(value);
-      }
-      return res;
+      return Column<T>(reader, 0);
     }
 
     /// <summary>
-    /// Map the first or the specified column to a list
+    /// Map the specified column to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
-    /// <param name="columnName">Name of the column to read</param>
+    /// <param name="columnName">Name of the column to read. Use first column if null</param>
     /// <returns></returns>
-    public static async Task<List<T>> ColumnAsync<T>(this DbDataReader reader, string columnName = null) where T : IComparable
+    public static List<T> Column<T>(this DbDataReader reader, string columnName) where T : IComparable
     {
-      int ord = columnName == null ? 0 : reader.GetOrdinal(columnName);
+      int ordinal = columnName is null ? 0 : reader.GetOrdinal(columnName);
+      return Column<T>(reader, ordinal);
+    }
 
-      var res = new List<T>();
-      while (await reader.ReadAsync())
-      {
-        T value = await reader.IsDBNullAsync(ord) ? default(T) : (T)reader.GetValue(ord);
-        res.Add(value);
-      }
-      return res;
+    /// <summary>
+    /// Map the first column to a list
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <returns></returns>
+    public static Task<List<T>> ColumnAsync<T>(this DbDataReader reader) where T : IComparable
+    {
+      return ColumnAsync<T>(reader, 0);
+    }
+
+    /// <summary>
+    /// Map the specified column to a list
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <param name="columnName">Name of the column to read. Use first column if null</param>
+    /// <returns></returns>
+    public static Task<List<T>> ColumnAsync<T>(this DbDataReader reader, string columnName) where T : IComparable
+    {
+      int ordinal = columnName is null ? 0 : reader.GetOrdinal(columnName);
+      return ColumnAsync<T>(reader, ordinal);
     }
 
     /// <summary>
@@ -311,6 +318,28 @@ namespace StoredProcedureEFCore
     public static async Task<T> SingleOrDefaultAsync<T>(this DbDataReader reader) where T : class, new()
     {
       return await FirstAsync<T>(reader, true, true);
+    }
+
+    private static List<T> Column<T>(DbDataReader reader, int ordinal) where T : IComparable
+    {
+      var res = new List<T>();
+      while (reader.Read())
+      {
+        T value = reader.IsDBNull(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
+        res.Add(value);
+      }
+      return res;
+    }
+
+    private static async Task<List<T>> ColumnAsync<T>(DbDataReader reader, int ordinal) where T : IComparable
+    {
+      var res = new List<T>();
+      while (await reader.ReadAsync())
+      {
+        T value = await reader.IsDBNullAsync(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
+        res.Add(value);
+      }
+      return res;
     }
 
     private static T First<T>(DbDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class, new()
