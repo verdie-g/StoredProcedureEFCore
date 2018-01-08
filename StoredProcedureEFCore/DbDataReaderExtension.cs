@@ -368,7 +368,7 @@ namespace StoredProcedureEFCore
         PropertyInfo[] props = GetDataReaderColumns<T>(reader);
         T row = await MapNextRowAsync<T>(reader, props);
 
-        if (throwIfNotSingle && reader.Read())
+        if (throwIfNotSingle && await reader.ReadAsync())
           throw new InvalidOperationException("Sequence contains more than one element");
 
         return row;
