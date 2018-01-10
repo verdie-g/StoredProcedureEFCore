@@ -4,7 +4,7 @@ using System.Data;
 
 namespace StoredProcedureEFCore
 {
-  public static class DbTypeConverter
+  internal static class DbTypeConverter
   {
     private static Dictionary<Type, DbType> _typeMap = new Dictionary<Type, DbType>
     {
