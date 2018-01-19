@@ -24,25 +24,25 @@ namespace StoredProcedureEFCore
 
     public IStoredProcBuilder AddParam<T>(string name, T val)
     {
-      AddParamInner<T>(name, val, ParameterDirection.Input);
+      AddParamInner(name, val, ParameterDirection.Input);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner<T>(name, default(T), ParameterDirection.Output);
+      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner<T>(name, val, ParameterDirection.InputOutput);
+      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput);
       return this;
     }
 
     public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam)
     {
-      retParam = AddOutputParamInner<T>("_retParam", default(T), ParameterDirection.ReturnValue);
+      retParam = AddOutputParamInner("_retParam", default(T), ParameterDirection.ReturnValue);
       return this;
     }
 
