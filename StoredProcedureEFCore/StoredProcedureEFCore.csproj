@@ -1,7 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
     <Title>StoredProcedureEFCore</Title>
     <Version>0.3.1</Version>
     <Authors>Grégoire Verdier</Authors>
@@ -17,8 +16,7 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.0.1" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
   </ItemGroup>
-
 </Project>
