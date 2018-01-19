@@ -169,9 +169,9 @@ namespace StoredProcedureEFCore
       _cmd.Connection.Open();
     }
 
-    private async Task OpenConnectionAsync()
+    private Task OpenConnectionAsync()
     {
-      await _cmd.Connection.OpenAsync();
+      return _cmd.Connection.OpenAsync();
     }
   }
 }
