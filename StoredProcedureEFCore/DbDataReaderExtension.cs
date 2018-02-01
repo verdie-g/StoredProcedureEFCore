@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace StoredProcedureEFCore
 {
   public static class DbDataReaderExtension
   {
+    private static Dictionary<CacheKey, Delegate[]> _settersCache = new Dictionary<CacheKey, Delegate[]>();
+
     /// <summary>
     /// Map reader to a model list
     /// </summary>
@@ -19,10 +22,10 @@ namespace StoredProcedureEFCore
     public static List<T> ToList<T>(this DbDataReader reader) where T : class, new()
     {
       var res = new List<T>();
-      PropertyInfo[] props = GetDataReaderColumns<T>(reader);
+      Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
       while (reader.Read())
       {
-        T row = MapNextRow<T>(reader, props);
+        T row = MapNextRow(reader, setters);
         res.Add(row);
       }
       return res;
@@ -37,10 +40,10 @@ namespace StoredProcedureEFCore
     public static async Task<List<T>> ToListAsync<T>(this DbDataReader reader) where T : class, new()
     {
       var res = new List<T>();
-      PropertyInfo[] props = GetDataReaderColumns<T>(reader);
+      Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
       while (await reader.ReadAsync())
       {
-        T row = await MapNextRowAsync<T>(reader, props);
+        T row = await MapNextRowAsync(reader, setters);
         res.Add(row);
       }
       return res;
@@ -103,14 +106,14 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this DbDataReader reader) where TKey : IComparable where TValue : class, new()
     {
-      PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
+      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
 
       var res = new Dictionary<TKey, TValue>();
       while (reader.Read())
       {
         TKey key = (TKey)reader.GetValue(0);
-        TValue val = MapNextRow<TValue>(reader, props, 1);
-        SetPropertyValue(reader, props, val, 0);
+        TValue val = MapNextRow(reader, setters, 1);
+        SetPropertyValue(reader, setters, val, 0);
         res[key] = val;
       }
       return res;
@@ -125,14 +128,14 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static async Task<Dictionary<TKey, TValue>> ToDictionaryAsync<TKey, TValue>(this DbDataReader reader) where TKey : IComparable where TValue : class, new()
     {
-      PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
+      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
 
       var res = new Dictionary<TKey, TValue>();
       while (await reader.ReadAsync())
       {
         TKey key = (TKey)reader.GetValue(0);
-        TValue val = await MapNextRowAsync<TValue>(reader, props, 1);
-        await SetPropertyValueAsync(reader, props, val, 0);
+        TValue val = await MapNextRowAsync(reader, setters, 1);
+        await SetPropertyValueAsync(reader, setters, val, 0);
         res[key] = val;
       }
       return res;
@@ -147,14 +150,14 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(this DbDataReader reader) where TKey : IComparable where TValue : class, new()
     {
-      PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
+      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
 
       var res = new Dictionary<TKey, List<TValue>>();
       while (reader.Read())
       {
         TKey key = (TKey)reader.GetValue(0);
-        TValue val = MapNextRow<TValue>(reader, props, 1);
-        SetPropertyValue(reader, props, val, 0);
+        TValue val = MapNextRow(reader, setters, 1);
+        SetPropertyValue(reader, setters, val, 0);
 
         if (res.ContainsKey(key))
         {
@@ -177,14 +180,14 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static async Task<Dictionary<TKey, List<TValue>>> ToLookupAsync<TKey, TValue>(this DbDataReader reader) where TKey : IComparable where TValue : class, new()
     {
-      PropertyInfo[] props = GetDataReaderColumns<TValue>(reader);
+      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
 
       var res = new Dictionary<TKey, List<TValue>>();
       while (await reader.ReadAsync())
       {
         TKey key = (TKey)reader.GetValue(0);
-        TValue val = await MapNextRowAsync<TValue>(reader, props, 1);
-        await SetPropertyValueAsync(reader, props, val, 0);
+        TValue val = await MapNextRowAsync(reader, setters, 1);
+        await SetPropertyValueAsync(reader, setters, val, 0);
 
         if (res.ContainsKey(key))
         {
@@ -346,8 +349,8 @@ namespace StoredProcedureEFCore
     {
       if (reader.Read())
       {
-        PropertyInfo[] props = GetDataReaderColumns<T>(reader);
-        T row = MapNextRow<T>(reader, props);
+        Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
+        T row = MapNextRow(reader, setters);
 
         if (throwIfNotSingle && reader.Read())
           throw new InvalidOperationException("Sequence contains more than one element");
@@ -365,8 +368,8 @@ namespace StoredProcedureEFCore
     {
       if (await reader.ReadAsync())
       {
-        PropertyInfo[] props = GetDataReaderColumns<T>(reader);
-        T row = await MapNextRowAsync<T>(reader, props);
+        Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
+        T row = await MapNextRowAsync(reader, setters);
 
         if (throwIfNotSingle && await reader.ReadAsync())
           throw new InvalidOperationException("Sequence contains more than one element");
@@ -381,60 +384,81 @@ namespace StoredProcedureEFCore
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static T MapNextRow<T>(DbDataReader reader, PropertyInfo[] props, int columnOffset = 0) where T : class, new()
+    private static T MapNextRow<T>(DbDataReader reader, Action<T, object>[] setters, int columnOffset = 0) where T : class, new()
     {
       T row = new T();
       for (int i = columnOffset; i < reader.FieldCount; i++)
       {
-        SetPropertyValue(reader, props, row, i);
+        SetPropertyValue(reader, setters, row, i);
       }
       return row;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static async Task<T> MapNextRowAsync<T>(DbDataReader reader, PropertyInfo[] props, int columnOffset = 0) where T : class, new()
+    private static async Task<T> MapNextRowAsync<T>(DbDataReader reader, Action<T, object>[] setters, int columnOffset = 0) where T : class, new()
     {
       T row = new T();
       for (int i = columnOffset; i < reader.FieldCount; i++)
       {
-        await SetPropertyValueAsync(reader, props, row, i);
+        await SetPropertyValueAsync(reader, setters, row, i);
       }
       return row;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void SetPropertyValue<T>(DbDataReader reader, PropertyInfo[] props, T row, int i) where T : class, new()
+    private static void SetPropertyValue<T>(DbDataReader reader, Action<T, object>[] setters, T row, int i) where T : class, new()
     {
       Debug.Assert(i >= 0 && i < reader.FieldCount);
 
-      if (props[i] == null)
+      if (setters[i] == null)
         return;
 
       object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
-      props[i].SetValue(row, value);
+      setters[i].DynamicInvoke(row, value);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static async Task SetPropertyValueAsync<T>(DbDataReader reader, PropertyInfo[] props, T row, int i) where T : class, new()
+    private static async Task SetPropertyValueAsync<T>(DbDataReader reader, Action<T, object>[] setters, T row, int i) where T : class, new()
     {
       Debug.Assert(i >= 0 && i < reader.FieldCount);
 
-      if (props[i] == null)
+      if (setters[i] == null)
         return;
 
       object value = await reader.IsDBNullAsync(i) ? null : reader.GetValue(i);
-      props[i].SetValue(row, value);
+      setters[i](row, value);
     }
 
-    private static PropertyInfo[] GetDataReaderColumns<T>(DbDataReader reader) where T : class, new()
+    private static Action<T, object>[] MapColumnsToSetters<T>(DbDataReader reader) where T : class, new()
     {
-      var res = new PropertyInfo[reader.FieldCount];
       Type modelType = typeof(T);
-      for (int i = 0; i < reader.FieldCount; i++)
+
+      string[] columns = new string[reader.FieldCount];
+      for (int i = 0; i < reader.FieldCount; ++i)
+        columns[i] = reader.GetName(i);
+
+      var key = new CacheKey(columns, modelType);
+      if (_settersCache.TryGetValue(key, out Delegate[] setters))
       {
-        string name = reader.GetName(i).Replace("_", "");
-        res[i] = modelType.GetProperty(name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        return (Action<T, object>[])setters;
       }
+
+      var res = new Action<T, object>[columns.Length];
+      for (int i = 0; i < columns.Length; i++)
+      {
+        string name = columns[i].Replace("_", "");
+        PropertyInfo prop = modelType.GetProperty(name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        if (prop == null)
+          continue;
+
+        ParameterExpression instance = Expression.Parameter(prop.DeclaringType, "instance");
+        ParameterExpression argument = Expression.Parameter(typeof(object), "value");
+        MethodCallExpression setterCall = Expression.Call(instance, prop.GetSetMethod(), Expression.Convert(argument, prop.PropertyType));
+        res[i] = (Action<T, object>)Expression.Lambda(setterCall, instance, argument).Compile();
+      }
+
+      _settersCache[key] = res;
+
       return res;
     }
   }

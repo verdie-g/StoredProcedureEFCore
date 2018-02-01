@@ -68,6 +68,7 @@
     <Build Include="dbo\Stored Procedures\ReturnBoolean.sql" />
     <Build Include="dbo\Stored Procedures\ListAll.sql" />
     <Build Include="dbo\Stored Procedures\Empty.sql" />
+    <Build Include="dbo\Stored Procedures\ListNotAll.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Populate.sql" />

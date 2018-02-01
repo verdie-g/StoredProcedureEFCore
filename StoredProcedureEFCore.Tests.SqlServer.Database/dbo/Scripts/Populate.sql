@@ -1,5 +1,5 @@
 ﻿DELETE FROM Table_1;
-INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Quimm', '2015-08-13T21:08:28Z', 1, 0);
+INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES (NULL, '2015-08-13T21:08:28Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Skippad', '2015-07-18T07:08:50Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Kayveo', '2016-05-26T14:28:36Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Skaboo', '2016-04-13T03:23:01Z', 0, 0);
@@ -13,7 +13,7 @@ INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Kare', '
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Wordpedia', '2017-03-28T12:34:27Z', 0, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Gabtune', '2016-09-12T21:29:56Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Janyx', '2015-11-11T14:21:32Z', 0, 0);
-INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Bubblebox', '2015-12-01T21:44:49Z', 1, 0);
+INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES (NULL, '2015-12-01T21:44:49Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Jabbertype', '2016-08-25T19:40:34Z', 0, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Linkbridge', '2017-03-10T00:52:36Z', 0, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Feedbug', '2015-05-26T13:38:14Z', 1, 0);
@@ -24,7 +24,7 @@ INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Voonix',
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Dabjam', '2016-05-07T09:17:54Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Yamia', '2015-03-30T09:02:58Z', 0, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Skippad', '2017-02-22T06:02:07Z', 0, 0);
-INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Meejo', '2016-04-16T11:21:51Z', 0, 0);
+INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES (NULL, '2016-04-16T11:21:51Z', 0, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Devpulse', '2016-11-20T02:14:30Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Jaxworks', '2016-11-14T02:53:29Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Thoughtstorm', '2015-05-03T01:35:01Z', 1, 0);
@@ -38,7 +38,7 @@ INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Trilia',
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Brainlounge', '2017-01-12T02:05:20Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Talane', '2016-09-17T01:27:32Z', 0, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Skipfire', '2015-12-18T08:52:37Z', 1, 0);
-INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Oba', '2016-10-04T03:38:38Z', 1, 0);
+INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES (NULL, '2016-10-04T03:38:38Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Trudeo', '2015-12-06T21:50:41Z', 1, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Topicshots', '2015-08-16T14:08:23Z', 0, 0);
 INSERT INTO Table_1 (name, date, active, name_with_underscore) VALUES ('Bubblebox', '2016-03-16T08:03:18Z', 0, 0);
