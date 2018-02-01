@@ -5,7 +5,7 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[ListAll]
 	@limit bigint = 9223372036854775807,
-  @limitOut bigint OUTPUT
+  @limitOut bigint = 0 OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;

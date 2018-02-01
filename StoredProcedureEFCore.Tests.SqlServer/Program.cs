@@ -21,6 +21,18 @@ namespace StoredProcedureEFCore.Tests.SqlServer
 
       long limitOutValue = limitOut.Value;
 
+      List<Model2> rows2 = null;
+
+      // EXEC dbo.ListNotAll @limit = 200
+      await ctx.LoadStoredProc("dbo.ListNotAll")
+        .AddParam("limit", 200L)
+        .ExecAsync(async r => rows2 = await r.ToListAsync<Model2>());
+
+      // EXEC dbo.ListNotAll @limit = 400
+      await ctx.LoadStoredProc("dbo.ListNotAll")
+        .AddParam("limit", 400L)
+        .ExecAsync(async r => rows2 = await r.ToListAsync<Model2>());
+
       // EXEC @_retParam = dbo.ReturnBoolean @boolean_to_return = true
       await ctx.LoadStoredProc("dbo.ReturnBoolean")
          .AddParam("boolean_to_return", true)
