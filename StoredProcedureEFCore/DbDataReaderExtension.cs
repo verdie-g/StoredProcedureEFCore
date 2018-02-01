@@ -11,6 +11,8 @@ namespace StoredProcedureEFCore
 {
   public static class DbDataReaderExtension
   {
+    private static Dictionary<CacheKey, Delegate[]> _settersCache = new Dictionary<CacheKey, Delegate[]>();
+
     /// <summary>
     /// Map reader to a model list
     /// </summary>
@@ -429,11 +431,22 @@ namespace StoredProcedureEFCore
 
     private static Action<T, object>[] MapColumnsToSetters<T>(DbDataReader reader) where T : class, new()
     {
-      var res = new Action<T, object>[reader.FieldCount];
       Type modelType = typeof(T);
-      for (int i = 0; i < reader.FieldCount; i++)
+
+      string[] columns = new string[reader.FieldCount];
+      for (int i = 0; i < reader.FieldCount; ++i)
+        columns[i] = reader.GetName(i);
+
+      var key = new CacheKey(columns, modelType);
+      if (_settersCache.TryGetValue(key, out Delegate[] setters))
       {
-        string name = reader.GetName(i).Replace("_", "");
+        return (Action<T, object>[])setters;
+      }
+
+      var res = new Action<T, object>[columns.Length];
+      for (int i = 0; i < columns.Length; i++)
+      {
+        string name = columns[i].Replace("_", "");
         PropertyInfo prop = modelType.GetProperty(name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
         if (prop == null)
           continue;
@@ -443,6 +456,9 @@ namespace StoredProcedureEFCore
         MethodCallExpression setterCall = Expression.Call(instance, prop.GetSetMethod(), Expression.Convert(argument, prop.PropertyType));
         res[i] = (Action<T, object>)Expression.Lambda(setterCall, instance, argument).Compile();
       }
+
+      _settersCache[key] = res;
+
       return res;
     }
   }
