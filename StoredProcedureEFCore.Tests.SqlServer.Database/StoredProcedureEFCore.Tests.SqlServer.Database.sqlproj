@@ -69,6 +69,7 @@
     <Build Include="dbo\Stored Procedures\ListAll.sql" />
     <Build Include="dbo\Stored Procedures\Empty.sql" />
     <Build Include="dbo\Stored Procedures\ListNotAll.sql" />
+    <Build Include="dbo\Stored Procedures\SelectParam.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Populate.sql" />
