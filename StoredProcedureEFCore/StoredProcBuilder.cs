@@ -156,15 +156,7 @@ namespace StoredProcedureEFCore
 
       DbParameter param = _cmd.CreateParameter();
       param.ParameterName = name;
-      if (val == null)
-      {
-        param.Value = DBNull.Value;
-      }
-      else
-      {
-        param.Value = val;
-      }
-
+      param.Value = (object)val ?? DBNull.Value;
       param.Direction = direction;
       param.DbType = DbTypeConverter.ConvertToDbType<T>();
 
