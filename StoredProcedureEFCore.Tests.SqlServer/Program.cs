@@ -49,6 +49,11 @@ namespace StoredProcedureEFCore.Tests.SqlServer
       // Limit is omitted, it takes default value specified in the stored procedure
       ctx.LoadStoredProc("dbo.ListAll")
          .Exec(r => rows = r.ToList<Model>());
+
+      // EXEC dbo.SelectParam @n = NULL
+      await ctx.LoadStoredProc("dbo.SelectParam")
+        .AddParam<int?>("n", null)
+        .ExecScalarAsync<int?>(i => Console.WriteLine(i));
     }
   }
 }

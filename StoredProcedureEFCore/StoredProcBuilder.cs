@@ -115,7 +115,8 @@ namespace StoredProcedureEFCore
       try
       {
         OpenConnection();
-        val = (T)_cmd.ExecuteScalar();
+        object scalar = _cmd.ExecuteScalar();
+        val = DefaultIfDBNull<T>(scalar);
       }
       finally
       {
@@ -128,7 +129,8 @@ namespace StoredProcedureEFCore
       try
       {
         await OpenConnectionAsync();
-        T val = (T)await _cmd.ExecuteScalarAsync();
+        object scalar = await _cmd.ExecuteScalarAsync();
+        T val = DefaultIfDBNull<T>(scalar);
         action(val);
       }
       finally
@@ -156,7 +158,7 @@ namespace StoredProcedureEFCore
 
       DbParameter param = _cmd.CreateParameter();
       param.ParameterName = name;
-      param.Value = val;
+      param.Value = (object)val ?? DBNull.Value;
       param.Direction = direction;
       param.DbType = DbTypeConverter.ConvertToDbType<T>();
 
@@ -172,6 +174,11 @@ namespace StoredProcedureEFCore
     private Task OpenConnectionAsync()
     {
       return _cmd.Connection.OpenAsync();
+    }
+
+    private T DefaultIfDBNull<T>(object o)
+    {
+      return o == DBNull.Value ? default(T) : (T)o;
     }
   }
 }
