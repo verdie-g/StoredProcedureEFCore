@@ -1,0 +1,10 @@
+language: csharp
+dist: trusty
+sudo: required
+mono: none
+dotnet: 2.0.0
+before_script: 
+  - dotnet restore
+script:
+  - dotnet build StoredProcedureEFCore -c Release
+  - dotnet test StoredProcedureEFCore.Tests
