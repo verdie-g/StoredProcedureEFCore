@@ -11,6 +11,9 @@ namespace StoredProcedureEFCore
 {
   public static class DbDataReaderExtension
   {
+    private const string NoElementError = "Sequence contains no element";
+    private const string MoreThanOneElementError = "Sequence contains more than one element";
+
     private static Dictionary<CacheKey, Delegate[]> _settersCache = new Dictionary<CacheKey, Delegate[]>();
 
     /// <summary>
@@ -353,7 +356,7 @@ namespace StoredProcedureEFCore
         T row = MapNextRow(reader, setters);
 
         if (throwIfNotSingle && reader.Read())
-          throw new InvalidOperationException("Sequence contains more than one element");
+          throw new InvalidOperationException(MoreThanOneElementError);
 
         return row;
       }
@@ -361,7 +364,7 @@ namespace StoredProcedureEFCore
       if (orDefault)
         return default(T);
 
-      throw new InvalidOperationException("Sequence contains no element");
+      throw new InvalidOperationException(NoElementError);
     }
 
     private static async Task<T> FirstAsync<T>(DbDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class, new()
@@ -372,7 +375,7 @@ namespace StoredProcedureEFCore
         T row = await MapNextRowAsync(reader, setters);
 
         if (throwIfNotSingle && await reader.ReadAsync())
-          throw new InvalidOperationException("Sequence contains more than one element");
+          throw new InvalidOperationException(MoreThanOneElementError);
 
         return row;
       }
@@ -380,7 +383,7 @@ namespace StoredProcedureEFCore
       if (orDefault)
         return default(T);
 
-      throw new InvalidOperationException("Sequence contains no element");
+      throw new InvalidOperationException(NoElementError);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
