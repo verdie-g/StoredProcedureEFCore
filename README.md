@@ -45,8 +45,8 @@ IStoredProcBuilder             LoadStoredProc(string name)
 ### DbDataReader
 ```csharp
 List<T>                              ToList<T>()
-Dictionary<TKey, TValue>             ToDictionary<TKey, TValue>()
-Dictionary<TKey, List<TValue>>       ToLookup<TKey, TValue>()
+Dictionary<TKey, TValue>             ToDictionary<TKey, TValue>(Func<TValue, TKey> keyProjection)
+Dictionary<TKey, List<TValue>>       ToLookup<TKey, TValue>(Func<TValue, TKey> keyProjection)
 HashSet<T>                           ToSet<T>()
 List<T>                              Column<T>()
 List<T>                              Column<T>(string columnName)
