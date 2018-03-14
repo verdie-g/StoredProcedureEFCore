@@ -288,9 +288,9 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static async Task<T> FirstAsync<T>(this DbDataReader reader) where T : class, new()
+    public static Task<T> FirstAsync<T>(this DbDataReader reader) where T : class, new()
     {
-      return await FirstAsync<T>(reader, false, false);
+      return FirstAsync<T>(reader, false, false);
     }
 
     /// <summary>
@@ -299,9 +299,9 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static async Task<T> FirstOrDefaultAsync<T>(this DbDataReader reader) where T : class, new()
+    public static Task<T> FirstOrDefaultAsync<T>(this DbDataReader reader) where T : class, new()
     {
-      return await FirstAsync<T>(reader, true, false);
+      return FirstAsync<T>(reader, true, false);
     }
 
     /// <summary>
@@ -310,9 +310,9 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static async Task<T> SingleAsync<T>(this DbDataReader reader) where T : class, new()
+    public static Task<T> SingleAsync<T>(this DbDataReader reader) where T : class, new()
     {
-      return await FirstAsync<T>(reader, false, true);
+      return FirstAsync<T>(reader, false, true);
     }
 
     /// <summary>
@@ -321,9 +321,9 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static async Task<T> SingleOrDefaultAsync<T>(this DbDataReader reader) where T : class, new()
+    public static Task<T> SingleOrDefaultAsync<T>(this DbDataReader reader) where T : class, new()
     {
-      return await FirstAsync<T>(reader, true, true);
+      return FirstAsync<T>(reader, true, true);
     }
 
     private static List<T> Column<T>(DbDataReader reader, int ordinal) where T : IComparable
