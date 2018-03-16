@@ -31,7 +31,7 @@ namespace StoredProcedureEFCore.Tests
     public void TestToDictionary()
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
-      Dictionary<sbyte, TestModel> resultSet = mock.ToDictionary<sbyte, TestModel>();
+      Dictionary<sbyte, TestModel> resultSet = mock.ToDictionary<sbyte, TestModel>(m => m.Sb);
       Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[_testModelsCollection[0].Sb], 0);
       TestModelEqual(resultSet[_testModelsCollection[1].Sb], 1);
@@ -41,7 +41,7 @@ namespace StoredProcedureEFCore.Tests
     public void TestToLookup()
     {
       DbDataReader mock = CreateDataReaderMock(0, 1).Object;
-      Dictionary<sbyte, List<TestModel>> resultSet = mock.ToLookup<sbyte, TestModel>();
+      Dictionary<sbyte, List<TestModel>> resultSet = mock.ToLookup<sbyte, TestModel>(m => m.Sb);
       Assert.Equal(2, resultSet.Count);
       TestModelEqual(resultSet[_testModelsCollection[0].Sb][0], 0);
       TestModelEqual(resultSet[_testModelsCollection[1].Sb][0], 1);

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <Title>StoredProcedureEFCore</Title>
-    <Version>0.3.4</Version>
+    <Version>0.3.5</Version>
     <Authors>Grégoire Verdier</Authors>
     <Description>Entity Framework Core extension to execute a stored procedure and map the result</Description>
     <RepositoryUrl>https://github.com/verdie-g/StoredProcedureEFCore</RepositoryUrl>
@@ -18,5 +18,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.0.1" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 </Project>
