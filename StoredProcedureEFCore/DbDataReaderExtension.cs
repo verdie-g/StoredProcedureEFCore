@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace StoredProcedureEFCore
@@ -13,8 +9,6 @@ namespace StoredProcedureEFCore
   {
     private const string NoElementError = "Sequence contains no element";
     private const string MoreThanOneElementError = "Sequence contains more than one element";
-
-    private static Dictionary<CacheKey, Delegate[]> _settersCache = new Dictionary<CacheKey, Delegate[]>();
 
     /// <summary>
     /// Map reader to a model list
@@ -25,12 +19,8 @@ namespace StoredProcedureEFCore
     public static List<T> ToList<T>(this DbDataReader reader) where T : class, new()
     {
       var res = new List<T>();
-      Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
-      while (reader.Read())
-      {
-        T row = MapNextRow(reader, setters);
-        res.Add(row);
-      }
+      var mapper = new Mapper<T>(reader);
+      mapper.Map(row => res.Add(row));
       return res;
     }
 
@@ -43,12 +33,8 @@ namespace StoredProcedureEFCore
     public static async Task<List<T>> ToListAsync<T>(this DbDataReader reader) where T : class, new()
     {
       var res = new List<T>();
-      Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
-      while (await reader.ReadAsync())
-      {
-        T row = await MapNextRowAsync(reader, setters);
-        res.Add(row);
-      }
+      var mapper = new Mapper<T>(reader);
+      await mapper.MapAsync(row => res.Add(row));
       return res;
     }
 
@@ -110,15 +96,13 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this DbDataReader reader, Func<TValue, TKey> keyProjection) where TKey : IComparable where TValue : class, new()
     {
-      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
-
       var res = new Dictionary<TKey, TValue>();
-      while (reader.Read())
+      var mapper = new Mapper<TValue>(reader);
+      mapper.Map(val =>
       {
-        TValue val = MapNextRow(reader, setters);
         TKey key = keyProjection(val);
         res[key] = val;
-      }
+      });
       return res;
     }
 
@@ -132,15 +116,13 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static async Task<Dictionary<TKey, TValue>> ToDictionaryAsync<TKey, TValue>(this DbDataReader reader, Func<TValue, TKey> keyProjection) where TKey : IComparable where TValue : class, new()
     {
-      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
-
       var res = new Dictionary<TKey, TValue>();
-      while (await reader.ReadAsync())
+      var mapper = new Mapper<TValue>(reader);
+      await mapper.MapAsync(val =>
       {
-        TValue val = await MapNextRowAsync(reader, setters);
         TKey key = keyProjection(val);
         res[key] = val;
-      }
+      });
       return res;
     }
 
@@ -154,12 +136,10 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(this DbDataReader reader, Func<TValue, TKey> keyProjection) where TKey : IComparable where TValue : class, new()
     {
-      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
-
       var res = new Dictionary<TKey, List<TValue>>();
-      while (reader.Read())
+      var mapper = new Mapper<TValue>(reader);
+      mapper.Map(val =>
       {
-        TValue val = MapNextRow(reader, setters);
         TKey key = keyProjection(val);
 
         if (res.ContainsKey(key))
@@ -170,7 +150,7 @@ namespace StoredProcedureEFCore
         {
           res[key] = new List<TValue>() { val };
         }
-      }
+      });
       return res;
     }
 
@@ -184,12 +164,10 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     public static async Task<Dictionary<TKey, List<TValue>>> ToLookupAsync<TKey, TValue>(this DbDataReader reader, Func<TValue, TKey> keyProjection) where TKey : IComparable where TValue : class, new()
     {
-      Action<TValue, object>[] setters = MapColumnsToSetters<TValue>(reader);
-
       var res = new Dictionary<TKey, List<TValue>>();
-      while (await reader.ReadAsync())
+      var mapper = new Mapper<TValue>(reader);
+      await mapper.MapAsync(val =>
       {
-        TValue val = await MapNextRowAsync(reader, setters);
         TKey key = keyProjection(val);
 
         if (res.ContainsKey(key))
@@ -200,7 +178,7 @@ namespace StoredProcedureEFCore
         {
           res[key] = new List<TValue>() { val };
         }
-      }
+      });
       return res;
     }
 
@@ -352,8 +330,8 @@ namespace StoredProcedureEFCore
     {
       if (reader.Read())
       {
-        Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
-        T row = MapNextRow(reader, setters);
+        var mapper = new Mapper<T>(reader);
+        T row = mapper.MapNextRow();
 
         if (throwIfNotSingle && reader.Read())
           throw new InvalidOperationException(MoreThanOneElementError);
@@ -371,8 +349,8 @@ namespace StoredProcedureEFCore
     {
       if (await reader.ReadAsync())
       {
-        Action<T, object>[] setters = MapColumnsToSetters<T>(reader);
-        T row = await MapNextRowAsync(reader, setters);
+        var mapper = new Mapper<T>(reader);
+        T row = await mapper.MapNextRowAsync();
 
         if (throwIfNotSingle && await reader.ReadAsync())
           throw new InvalidOperationException(MoreThanOneElementError);
@@ -384,69 +362,6 @@ namespace StoredProcedureEFCore
         return default(T);
 
       throw new InvalidOperationException(NoElementError);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static T MapNextRow<T>(DbDataReader reader, Action<T, object>[] setters) where T : class, new()
-    {
-      T row = new T();
-      for (int i = 0; i < reader.FieldCount; i++)
-      {
-        if (setters[i] == null)
-          continue;
-
-        object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
-        setters[i](row, value);
-      }
-      return row;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static async Task<T> MapNextRowAsync<T>(DbDataReader reader, Action<T, object>[] setters) where T : class, new()
-    {
-      T row = new T();
-      for (int i = 0; i < reader.FieldCount; i++)
-      {
-        if (setters[i] == null)
-          continue;
-
-        object value = await reader.IsDBNullAsync(i) ? null : reader.GetValue(i);
-        setters[i](row, value);
-      }
-      return row;
-    }
-
-    private static Action<T, object>[] MapColumnsToSetters<T>(DbDataReader reader) where T : class, new()
-    {
-      Type modelType = typeof(T);
-
-      string[] columns = new string[reader.FieldCount];
-      for (int i = 0; i < reader.FieldCount; ++i)
-        columns[i] = reader.GetName(i);
-
-      var key = new CacheKey(columns, modelType);
-      if (_settersCache.TryGetValue(key, out Delegate[] setters))
-      {
-        return (Action<T, object>[])setters;
-      }
-
-      var res = new Action<T, object>[columns.Length];
-      for (int i = 0; i < columns.Length; i++)
-      {
-        string name = columns[i].Replace("_", "");
-        PropertyInfo prop = modelType.GetProperty(name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        if (prop == null)
-          continue;
-
-        ParameterExpression instance = Expression.Parameter(prop.DeclaringType, "instance");
-        ParameterExpression argument = Expression.Parameter(typeof(object), "value");
-        MethodCallExpression setterCall = Expression.Call(instance, prop.GetSetMethod(), Expression.Convert(argument, prop.PropertyType));
-        res[i] = (Action<T, object>)Expression.Lambda(setterCall, instance, argument).Compile();
-      }
-
-      _settersCache[key] = res;
-
-      return res;
     }
   }
 }
