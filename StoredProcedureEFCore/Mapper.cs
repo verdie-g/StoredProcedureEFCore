@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -81,12 +82,12 @@ namespace StoredProcedureEFCore
         columns[i] = _reader.GetName(i);
 
       var key = new CacheKey(columns, modelType);
-      if (_settersCache.TryGetValue(key, out (int, Action<object, object>)[] setters))
+      if (_settersCache.TryGetValue(key, out (int, Action<object, object>)[] s))
       {
-        return setters;
+        return s;
       }
 
-      var res = new (int, Action<object, object>)[columns.Length];
+      var setters = new List<(int, Action<object, object>)>(columns.Length);
       for (int i = 0; i < columns.Length; i++)
       {
         string name = columns[i].Replace("_", "");
@@ -99,12 +100,11 @@ namespace StoredProcedureEFCore
         MethodCallExpression setterCall = Expression.Call(Expression.Convert(instance, prop.DeclaringType), prop.GetSetMethod(), Expression.Convert(argument, prop.PropertyType));
         var setter = (Action<object, object>)Expression.Lambda(setterCall, instance, argument).Compile();
 
-        res[i] = (i, setter);
+        setters.Add((i, setter));
       }
-
-      _settersCache[key] = res;
-
-      return res;
+      var settersArray = setters.ToArray(); 
+      _settersCache[key] = settersArray;
+      return settersArray;
     }
   }
 }
