@@ -19,6 +19,12 @@ namespace StoredProcedureEFCore
       cmd.CommandType = CommandType.StoredProcedure;
       cmd.CommandText = name;
 
+      int? cmdTimeout = ctx.Database.GetCommandTimeout();
+      if (cmdTimeout.HasValue)
+      {
+        cmd.CommandTimeout = cmdTimeout.Value;
+      }
+
       _cmd = cmd;
     }
 

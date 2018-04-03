@@ -13,7 +13,7 @@ The method handles :
 
 ## Entity Framework Core supports stored procedure since 2.1
 
-This library will soon be obsolete, but it has few advantages comparated to *FromSql*:
+This library will soon be obsolete, but it has few advantages compared to *FromSql*:
 - Extra property in the model won't throw an exception. The property keeps its default value
 - The interface is easier to use (I think). Output parameters and return values seem difficult
 to use with EFCore
