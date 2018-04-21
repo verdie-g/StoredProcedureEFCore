@@ -8,6 +8,7 @@ namespace StoredProcedureEFCore
 {
   internal class StoredProcBuilder : IStoredProcBuilder
   {
+    private const string _retParamName = "_retParam";
     private DbCommand _cmd;
 
     public StoredProcBuilder(DbContext ctx, string name)
@@ -30,25 +31,43 @@ namespace StoredProcedureEFCore
 
     public IStoredProcBuilder AddParam<T>(string name, T val)
     {
-      AddParamInner(name, val, ParameterDirection.Input);
+      AddParamInner(name, val, ParameterDirection.Input, null);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output);
+      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output, null);
+      return this;
+    }
+
+    public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, ParamExtra extra)
+    {
+      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output, extra);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput);
+      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput, null);
+      return this;
+    }
+
+    public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, ParamExtra extra)
+    {
+      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput, extra);
       return this;
     }
 
     public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam)
     {
-      retParam = AddOutputParamInner("_retParam", default(T), ParameterDirection.ReturnValue);
+      retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue, null);
+      return this;
+    }
+
+    public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam, ParamExtra extra)
+    {
+      retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue, extra);
       return this;
     }
 
@@ -151,13 +170,13 @@ namespace StoredProcedureEFCore
       _cmd.Dispose();
     }
 
-    private OutputParam<T> AddOutputParamInner<T>(string name, T val, ParameterDirection direction)
+    private OutputParam<T> AddOutputParamInner<T>(string name, T val, ParameterDirection direction, ParamExtra extra)
     {
-      DbParameter param = AddParamInner(name, val, direction);
+      DbParameter param = AddParamInner(name, val, direction, extra);
       return new OutputParam<T>(param);
     }
 
-    private DbParameter AddParamInner<T>(string name, T val, ParameterDirection direction)
+    private DbParameter AddParamInner<T>(string name, T val, ParameterDirection direction, ParamExtra extra)
     {
       if (name is null)
         throw new ArgumentNullException(nameof(name));
@@ -167,6 +186,12 @@ namespace StoredProcedureEFCore
       param.Value = (object)val ?? DBNull.Value;
       param.Direction = direction;
       param.DbType = DbTypeConverter.ConvertToDbType<T>();
+      if (extra != null)
+      {
+        param.Precision = extra.Precision;
+        param.Scale = extra.Scale;
+        param.Size = extra.Size;
+      }
 
       _cmd.Parameters.Add(param);
       return param;

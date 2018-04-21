@@ -29,6 +29,17 @@ namespace StoredProcedureEFCore
     IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam);
 
     /// <summary>
+    /// Add input/output parameter
+    /// </summary>
+    /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="val">Value of the parameter</param>
+    /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
+    /// <param name="extra">Parameter extra informations</param>
+    /// <returns></returns>
+    IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, ParamExtra extra);
+
+    /// <summary>
     /// Add output parameter
     /// </summary>
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
@@ -38,12 +49,31 @@ namespace StoredProcedureEFCore
     IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam);
 
     /// <summary>
+    /// Add output parameter
+    /// </summary>
+    /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
+    /// <param name="extra">Parameter extra informations</param>
+    /// <returns></returns>
+    IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, ParamExtra extra);
+
+    /// <summary>
     /// Add return value parameter
     /// </summary>
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="retParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam);
+    
+    /// <summary>
+    /// Add return value parameter
+    /// </summary>
+    /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
+    /// <param name="retParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
+    /// <param name="extra">Parameter extra informations</param>
+    /// <returns></returns>
+    IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam, ParamExtra extra);
 
     /// <summary>
     /// Execute the stored procedure
