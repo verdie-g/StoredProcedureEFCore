@@ -4,10 +4,8 @@
 -- Description:
 -- =============================================
 CREATE PROCEDURE [dbo].[OutputFixedSize]
-  @fixed_size varchar OUTPUT
+  @fixed_size varchar(255) OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;
-
-  SET @fixed_size = 'Jambon Beurre'
+	SET @fixed_size = 'Jambon Beurre'
 END
