@@ -24,7 +24,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
     /// <param name="val">Value of the parameter</param>
-    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
+    /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam);
 
@@ -33,7 +33,7 @@ namespace StoredProcedureEFCore
     /// </summary>
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
-    /// <param name="outParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
+    /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam);
 
@@ -41,7 +41,7 @@ namespace StoredProcedureEFCore
     /// Add return value parameter
     /// </summary>
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
-    /// <param name="retParam">Created parameteter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
+    /// <param name="retParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
     /// <returns></returns>
     IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam);
 
@@ -70,14 +70,12 @@ namespace StoredProcedureEFCore
     /// <summary>
     /// Execute the stored procedure and return the first column of the first row
     /// </summary>
-    /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="val"></param>
     void ExecScalar<T>(out T val);
 
     /// <summary>
     /// Execute the stored procedure and return the first column of the first row
-    /// </summary>
     /// </summary>
     /// <typeparam name="T">Type of the scalar value</param>
     /// <param name="action">Action with the scalar value</param>
