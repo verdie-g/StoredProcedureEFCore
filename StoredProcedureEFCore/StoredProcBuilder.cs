@@ -71,6 +71,12 @@ namespace StoredProcedureEFCore
       return this;
     }
 
+    public IStoredProcBuilder SetTimeout(int timeout)
+    {
+      _cmd.CommandTimeout = timeout;
+      return this;
+    }
+
     public void Exec(Action<DbDataReader> action)
     {
       if (action is null)

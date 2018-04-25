@@ -76,6 +76,13 @@ namespace StoredProcedureEFCore
     IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam, ParamExtra extra);
 
     /// <summary>
+    /// Set the wait time before terminating the attempt to execute the stored procedure and generating an error
+    /// </summary>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    IStoredProcBuilder SetTimeout(int timeout);
+
+    /// <summary>
     /// Execute the stored procedure
     /// </summary>
     /// <param name="action">Actions to do with the result sets</param>

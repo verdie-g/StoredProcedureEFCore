@@ -15,6 +15,7 @@ namespace StoredProcedureEFCore.Tests.SqlServer
 
       // EXEC dbo.ListAll @limit = 300, @limitOut OUT
       await ctx.LoadStoredProc("dbo.ListAll")
+        .SetTimeout(1)
         .AddParam("limit", 300L)
         .AddParam("limitOut", out IOutParam<long> limitOut)
         .ExecAsync(async r => rows = await r.ToListAsync<Model>());
