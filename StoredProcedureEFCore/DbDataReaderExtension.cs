@@ -63,6 +63,24 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
+    /// Map the specified column to a list
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <param name="ordinal">Zero-based column ordinal</param>
+    /// <returns></returns>
+    public static List<T> Column<T>(this DbDataReader reader, int ordinal) where T : IComparable
+    {
+      var res = new List<T>();
+      while (reader.Read())
+      {
+        T value = reader.IsDBNull(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
+        res.Add(value);
+      }
+      return res;
+    }
+
+    /// <summary>
     /// Map the first column to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
@@ -84,6 +102,24 @@ namespace StoredProcedureEFCore
     {
       int ordinal = columnName is null ? 0 : reader.GetOrdinal(columnName);
       return ColumnAsync<T>(reader, ordinal);
+    }
+
+    /// <summary>
+    /// Map the specified column to a list
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <param name="ordinal">Zero-based column ordinal</param>
+    /// <returns></returns>
+    public static async Task<List<T>> ColumnAsync<T>(this DbDataReader reader, int ordinal) where T : IComparable
+    {
+      var res = new List<T>();
+      while (await reader.ReadAsync())
+      {
+        T value = await reader.IsDBNullAsync(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
+        res.Add(value);
+      }
+      return res;
     }
 
     /// <summary>
@@ -302,28 +338,6 @@ namespace StoredProcedureEFCore
     public static Task<T> SingleOrDefaultAsync<T>(this DbDataReader reader) where T : class, new()
     {
       return FirstAsync<T>(reader, true, true);
-    }
-
-    private static List<T> Column<T>(DbDataReader reader, int ordinal) where T : IComparable
-    {
-      var res = new List<T>();
-      while (reader.Read())
-      {
-        T value = reader.IsDBNull(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
-        res.Add(value);
-      }
-      return res;
-    }
-
-    private static async Task<List<T>> ColumnAsync<T>(DbDataReader reader, int ordinal) where T : IComparable
-    {
-      var res = new List<T>();
-      while (await reader.ReadAsync())
-      {
-        T value = await reader.IsDBNullAsync(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
-        res.Add(value);
-      }
-      return res;
     }
 
     private static T First<T>(DbDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class, new()
