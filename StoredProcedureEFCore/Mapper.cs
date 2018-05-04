@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -14,15 +13,15 @@ namespace StoredProcedureEFCore
   /// <typeparam name="T">Model type</typeparam>
   internal class Mapper<T> where T : class, new()
   {
-    private static Dictionary<CacheKey, (int, Action<object, object>)[]> _settersCache = new Dictionary<CacheKey, (int, Action<object, object>)[]>();
+    private static Dictionary<CacheKey, Prop[]> _propertiesCache = new Dictionary<CacheKey, Prop[]>();
 
     private DbDataReader _reader;
-    private (int Ordinal, Action<object, object> Setter)[] _setters;
+    private Prop[] _properties;
 
     public Mapper(DbDataReader reader)
     {
       _reader = reader;
-      _setters = MapColumnsToSetters();
+      _properties = MapColumnsToProperties();
     }
 
     /// <summary>
@@ -54,10 +53,10 @@ namespace StoredProcedureEFCore
     public T MapNextRow()
     {
       T row = new T();
-      for (int i = 0; i < _setters.Length; ++i)
+      for (int i = 0; i < _properties.Length; ++i)
       {
-        object value = _reader.IsDBNull(_setters[i].Ordinal) ? null : _reader.GetValue(_setters[i].Ordinal);
-        _setters[i].Setter(row, value);
+        object value = _reader.IsDBNull(_properties[i].ColumnOrdinal) ? null : _reader.GetValue(_properties[i].ColumnOrdinal);
+        _properties[i].Setter(row, value);
       }
       return row;
     }
@@ -65,15 +64,15 @@ namespace StoredProcedureEFCore
     public async Task<T> MapNextRowAsync()
     {
       T row = new T();
-      for (int i = 0; i < _setters.Length; ++i)
+      for (int i = 0; i < _properties.Length; ++i)
       {
-        object value = await _reader.IsDBNullAsync(_setters[i].Ordinal) ? null : _reader.GetValue(_setters[i].Ordinal);
-        _setters[i].Setter(row, value);
+        object value = await _reader.IsDBNullAsync(_properties[i].ColumnOrdinal) ? null : _reader.GetValue(_properties[i].ColumnOrdinal);
+        _properties[i].Setter(row, value);
       }
       return row;
     }
 
-    private (int, Action<object, object>)[] MapColumnsToSetters()
+    private Prop[] MapColumnsToProperties()
     {
       Type modelType = typeof(T);
 
@@ -82,12 +81,12 @@ namespace StoredProcedureEFCore
         columns[i] = _reader.GetName(i);
 
       var key = new CacheKey(columns, modelType);
-      if (_settersCache.TryGetValue(key, out (int, Action<object, object>)[] s))
+      if (_propertiesCache.TryGetValue(key, out Prop[] s))
       {
         return s;
       }
 
-      var setters = new List<(int, Action<object, object>)>(columns.Length);
+      var properties = new List<Prop>(columns.Length);
       for (int i = 0; i < columns.Length; i++)
       {
         string name = columns[i].Replace("_", "");
@@ -100,11 +99,15 @@ namespace StoredProcedureEFCore
         MethodCallExpression setterCall = Expression.Call(Expression.Convert(instance, prop.DeclaringType), prop.GetSetMethod(), Expression.Convert(argument, prop.PropertyType));
         var setter = (Action<object, object>)Expression.Lambda(setterCall, instance, argument).Compile();
 
-        setters.Add((i, setter));
+        properties.Add(new Prop
+        {
+          ColumnOrdinal = i,
+          Setter = setter,
+        });
       }
-      var settersArray = setters.ToArray(); 
-      _settersCache[key] = settersArray;
-      return settersArray;
+      Prop[] propertiesArray = properties.ToArray(); 
+      _propertiesCache[key] = propertiesArray;
+      return propertiesArray;
     }
   }
 }

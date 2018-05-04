@@ -141,7 +141,6 @@ namespace StoredProcedureEFCore.Tests
       Assert.Equal(col[1], _testModelsCollection[1].Sb);
     }
 
-
     [Fact]
     public void TestColumn2()
     {
@@ -150,6 +149,16 @@ namespace StoredProcedureEFCore.Tests
       Assert.Equal(2, col.Count);
       Assert.Equal(col[0], _testModelsCollection[0].Ul);
       Assert.Equal(col[1], _testModelsCollection[1].Ul);
+    }
+
+    [Fact]
+    public void TestColumn3()
+    {
+      DbDataReader mock = CreateDataReaderMock(0, 1).Object;
+      List<int> col = mock.Column<int>(3);
+      Assert.Equal(2, col.Count);
+      Assert.Equal(col[0], _testModelsCollection[0].I);
+      Assert.Equal(col[1], _testModelsCollection[1].I);
     }
 
     private void TestModelEqual(TestModel tm1, int i)

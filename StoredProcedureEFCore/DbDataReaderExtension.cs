@@ -11,7 +11,7 @@ namespace StoredProcedureEFCore
     private const string MoreThanOneElementError = "Sequence contains more than one element";
 
     /// <summary>
-    /// Map reader to a model list
+    /// Map data source to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -25,7 +25,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader to a model list
+    /// Map data source to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -63,6 +63,24 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
+    /// Map the specified column to a list
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <param name="ordinal">Zero-based column ordinal</param>
+    /// <returns></returns>
+    public static List<T> Column<T>(this DbDataReader reader, int ordinal) where T : IComparable
+    {
+      var res = new List<T>();
+      while (reader.Read())
+      {
+        T value = reader.IsDBNull(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
+        res.Add(value);
+      }
+      return res;
+    }
+
+    /// <summary>
     /// Map the first column to a list
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
@@ -87,7 +105,25 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Create a dictionary using the first column as a key. Keys must be unique
+    /// Map the specified column to a list
+    /// </summary>
+    /// <typeparam name="T">Model</typeparam>
+    /// <param name="reader"></param>
+    /// <param name="ordinal">Zero-based column ordinal</param>
+    /// <returns></returns>
+    public static async Task<List<T>> ColumnAsync<T>(this DbDataReader reader, int ordinal) where T : IComparable
+    {
+      var res = new List<T>();
+      while (await reader.ReadAsync())
+      {
+        T value = await reader.IsDBNullAsync(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
+        res.Add(value);
+      }
+      return res;
+    }
+
+    /// <summary>
+    /// Create a dictionary. Keys must be unique
     /// </summary>
     /// <typeparam name="TKey">Type of the keys</typeparam>
     /// <typeparam name="TValue">Type of the values</typeparam>
@@ -107,7 +143,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Create a dictionary using the first column as a key. Keys must be unique
+    /// Create a dictionary. Keys must be unique
     /// </summary>
     /// <typeparam name="TKey">Type of the keys</typeparam>
     /// <typeparam name="TValue">Type of the values</typeparam>
@@ -127,7 +163,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Create a dictionary using the first column as a key
+    /// Create a dictionary
     /// </summary>
     /// <typeparam name="TKey">Type of the keys</typeparam>
     /// <typeparam name="TValue">Type of the values</typeparam>
@@ -155,7 +191,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Create a dictionary using the first column as a key
+    /// Create a dictionary
     /// </summary>
     /// <typeparam name="TKey">Type of the keys</typeparam>
     /// <typeparam name="TValue">Type of the values</typeparam>
@@ -217,7 +253,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model
+    /// Read first row
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -228,7 +264,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model or return default value if the result set is empty
+    /// Read first row or return default value if the data source is empty
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -239,7 +275,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model or throw an exception if result set contains more than one row
+    /// Read first row or throw an exception if data source contains more than one row
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -250,7 +286,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model or return default value if the result set is empty
+    /// Read first row or return default value if the data source is empty
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -261,7 +297,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model
+    /// Read first row
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -272,7 +308,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model or return default value if the result set is empty
+    /// Read first row or return default value if the data source is empty
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -283,7 +319,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model or throw an exception if result set contains more than one row
+    /// Read first row or throw an exception if data source contains more than one row
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -294,7 +330,7 @@ namespace StoredProcedureEFCore
     }
 
     /// <summary>
-    /// Map reader's first row to a model or return default value if the result set is empty
+    /// Read first row or return default value if the data source is empty
     /// </summary>
     /// <typeparam name="T">Model</typeparam>
     /// <param name="reader"></param>
@@ -302,28 +338,6 @@ namespace StoredProcedureEFCore
     public static Task<T> SingleOrDefaultAsync<T>(this DbDataReader reader) where T : class, new()
     {
       return FirstAsync<T>(reader, true, true);
-    }
-
-    private static List<T> Column<T>(DbDataReader reader, int ordinal) where T : IComparable
-    {
-      var res = new List<T>();
-      while (reader.Read())
-      {
-        T value = reader.IsDBNull(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
-        res.Add(value);
-      }
-      return res;
-    }
-
-    private static async Task<List<T>> ColumnAsync<T>(DbDataReader reader, int ordinal) where T : IComparable
-    {
-      var res = new List<T>();
-      while (await reader.ReadAsync())
-      {
-        T value = await reader.IsDBNullAsync(ordinal) ? default(T) : (T)reader.GetValue(ordinal);
-        res.Add(value);
-      }
-      return res;
     }
 
     private static T First<T>(DbDataReader reader, bool orDefault, bool throwIfNotSingle) where T : class, new()
