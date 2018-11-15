@@ -205,12 +205,19 @@ namespace StoredProcedureEFCore
 
     private void OpenConnection()
     {
-      _cmd.Connection.Open();
+      if (_cmd.Connection.State == ConnectionState.Closed)
+      {
+        _cmd.Connection.Open();
+      }
     }
 
     private Task OpenConnectionAsync()
     {
-      return _cmd.Connection.OpenAsync();
+      if (_cmd.Connection.State == ConnectionState.Closed)
+      {
+        return _cmd.Connection.OpenAsync();
+      }
+      return Task.CompletedTask;
     }
 
     private T DefaultIfDBNull<T>(object o)
