@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq.Expressions;
@@ -13,7 +14,7 @@ namespace StoredProcedureEFCore
   /// <typeparam name="T">Model type</typeparam>
   internal class Mapper<T> where T : class, new()
   {
-    private static Dictionary<CacheKey, Prop[]> _propertiesCache = new Dictionary<CacheKey, Prop[]>();
+    private static ConcurrentDictionary<CacheKey, Prop[]> _propertiesCache = new ConcurrentDictionary<CacheKey, Prop[]>();
 
     private DbDataReader _reader;
     private Prop[] _properties;
