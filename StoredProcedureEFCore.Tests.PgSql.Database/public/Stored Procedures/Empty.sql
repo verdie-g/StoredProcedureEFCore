@@ -1,0 +1,5 @@
+﻿CREATE OR REPLACE FUNCTION empty() RETURNS SETOF table_1
+LANGUAGE sql
+AS $$
+  SELECT * FROM table_1 WHERE id < 0;
+$$;
