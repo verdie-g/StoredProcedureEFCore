@@ -11,14 +11,6 @@ The method handles :
 - Underscores in result set column names ("column_name" is mapped to ColumnName property)
 - Int (db) to enumeration (result model) mapping
 
-## Entity Framework Core supports stored procedure since 2.1
-
-This library will soon be obsolete, but it has few advantages compared to *FromSql*:
-- Extra property in the model won't throw an exception. The property keeps its default value
-- The interface is easier to use (I think). Output parameters and return values seem difficult
-to use with EFCore
-- It is 30% faster
-
 ## Example
 
 ```csharp
@@ -50,34 +42,32 @@ ctx.LoadStoredProc("dbo.ListAll")
 IStoredProcBuilder             LoadStoredProc(string name)
 ```
 
-### DbDataReader
-```csharp
-List<T>                              ToList<T>()
-Dictionary<TKey, TValue>             ToDictionary<TKey, TValue>(Func<TValue, TKey> keyProjection)
-Dictionary<TKey, List<TValue>>       ToLookup<TKey, TValue>(Func<TValue, TKey> keyProjection)
-HashSet<T>                           ToSet<T>()
-List<T>                              Column<T>()
-List<T>                              Column<T>(string columnName)
-T                                    First<T>()
-T                                    FirstOrDefault<T>()
-T                                    Single<T>()
-T                                    SingleOrDefault<T>()
-```
-
-All these methods have a corresponding async method : ToListAsync, ToDictionaryAsync, ...
-
 ### IStoredProcBuilder
 ```csharp
-IStoredProcBuilder                   AddParam<T>(string name, T val)                             // Input parameter
-IStoredProcBuilder                   AddParam<T>(string name, T val, out IOutParam<T> outParam)  // Input/Ouput parameter
-IStoredProcBuilder                   AddParam<T>(string name, out IOutParam<T> outParam)         // Ouput parameter
-IStoredProcBuilder                   ReturnValue<T>(out IOutParam<T> retParam)
-void                                 Exec(Action<DbDataReader> action)
-void                                 ExecNonQuery()
-void                                 ExecScalar<T>(out T val)
+IStoredProcBuilder             AddParam<T>(string name, T val)                             // Input parameter
+IStoredProcBuilder             AddParam<T>(string name, T val, out IOutParam<T> outParam)  // Input/Ouput parameter
+IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam)         // Ouput parameter
+IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam)
+void                           Exec(Action<DbDataReader> action)
+void                           ExecNonQuery()
+void                           ExecScalar<T>(out T val)
 ```
-
 Exec, ExecNonQuery, and ExecScalar have a corresponding async method.
+
+### DbDataReader
+```csharp
+List<T>                        ToList<T>()
+Dictionary<TKey, TValue>       ToDictionary<TKey, TValue>(Func<TValue, TKey> keyProjection)
+Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(Func<TValue, TKey> keyProjection)
+HashSet<T>                     ToSet<T>()
+List<T>                        Column<T>()
+List<T>                        Column<T>(string columnName)
+T                              First<T>()
+T                              FirstOrDefault<T>()
+T                              Single<T>()
+T                              SingleOrDefault<T>()
+```
+All these methods have a corresponding async method : ToListAsync, ToDictionaryAsync, ...
 
 ## Installation
 
@@ -88,3 +78,8 @@ Exec, ExecNonQuery, and ExecScalar have a corresponding async method.
 Stored procedure execution was not supported in entity framework core:
 - [Raw store access APIs: Support for ad hoc mapping of arbitrary types #1862](https://github.com/aspnet/EntityFramework/issues/1862)
 - [Stored procedure mapping support #245](https://github.com/aspnet/EntityFramework/issues/245)
+
+It is now supported since EF Core 2.1 but this library has few advantages compared to *FromSql*:
+- Extra property in the model won't throw an exception. The property keeps its default value
+- The interface is easier to use. Output parameters and return values seem difficult to use with EFCore
+- Mapping is 30% faster
