@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace StoredProcedureEFCore.Tests.SqlServer
 {
@@ -61,6 +61,25 @@ namespace StoredProcedureEFCore.Tests.SqlServer
         .ExecNonQueryAsync();
 
       string s = fixedSizeParam.Value;
+
+      try
+      {
+        await ctx.LoadStoredProc("dbo.OutputNullable")
+          .AddParam("nullable", out IOutParam<int> nullableWithExceptionParameter)
+          .ExecNonQueryAsync();
+
+        var nullableWithException = nullableWithExceptionParameter.Value;
+      }
+      catch (InvalidOperationException)
+      {
+        // Should throw InvalidOperationException as int is not nullable
+      }
+
+      await ctx.LoadStoredProc("dbo.OutputNullable")
+          .AddParam("nullable", out IOutParam<int?> nullableParameter)
+          .ExecNonQueryAsync();
+
+      var nullable = nullableParameter.Value;
     }
   }
 }
