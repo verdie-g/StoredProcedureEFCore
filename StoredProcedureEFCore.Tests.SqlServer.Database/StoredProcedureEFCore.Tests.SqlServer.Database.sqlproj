@@ -71,6 +71,7 @@
     <Build Include="dbo\Stored Procedures\ListNotAll.sql" />
     <Build Include="dbo\Stored Procedures\SelectParam.sql" />
     <Build Include="dbo\Stored Procedures\OutputFixedSize.sql" />
+    <Build Include="dbo\Stored Procedures\OutputNullable.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Populate.sql" />
