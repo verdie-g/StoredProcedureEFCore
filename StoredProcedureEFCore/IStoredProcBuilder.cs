@@ -28,6 +28,9 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam);
 
+    [Obsolete("Use AddParam with precision/scale/size parameters instead")]
+    IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, ParamExtra extra);
+
     /// <summary>
     /// Add input/output parameter
     /// </summary>
@@ -35,9 +38,10 @@ namespace StoredProcedureEFCore
     /// <param name="name">Name of the parameter</param>
     /// <param name="val">Value of the parameter</param>
     /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
-    /// <param name="extra">Parameter extra informations</param>
-    /// <returns></returns>
-    IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, ParamExtra extra);
+    /// <param name="size">Number of decimal places to which <see cref="IOutParam{T}.Value"/> is resolved.</param>
+    /// <param name="precision">Number of digits used to represent the <see cref="IOutParam{T}.Value"/> property.</param>
+    /// <param name="scale">Maximum size, in bytes, of the data within the column.</param>
+    IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, int size = 0, byte precision = 0, byte scale = 0);
 
     /// <summary>
     /// Add output parameter
@@ -48,15 +52,19 @@ namespace StoredProcedureEFCore
     /// <returns></returns>
     IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam);
 
+    [Obsolete("Use AddParam with precision/scale/size parameters instead")]
+    IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, ParamExtra extra);
+
     /// <summary>
     /// Add output parameter
     /// </summary>
     /// <typeparam name="T">Type of the parameter. Can be nullable</typeparam>
     /// <param name="name">Name of the parameter</param>
     /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/></param>
-    /// <param name="extra">Parameter extra informations</param>
-    /// <returns></returns>
-    IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, ParamExtra extra);
+    /// <param name="size">Number of decimal places to which <see cref="IOutParam{T}.Value"/> is resolved.</param>
+    /// <param name="precision">Number of digits used to represent the <see cref="IOutParam{T}.Value"/> property.</param>
+    /// <param name="scale">Maximum size, in bytes, of the data within the column.</param>
+    IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, int size = 0, byte precision = 0, byte scale = 0);
 
     /// <summary>
     /// Add pre configured DB query execution parameter directly command

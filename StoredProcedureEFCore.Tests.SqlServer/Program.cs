@@ -57,7 +57,7 @@ namespace StoredProcedureEFCore.Tests.SqlServer
         .ExecScalarAsync<int?>(i => Console.WriteLine(i));
 
       await ctx.LoadStoredProc("dbo.OutputFixedSize")
-        .AddParam("fixed_size", out IOutParam<string> fixedSizeParam, new ParamExtra { Size = 255 })
+        .AddParam("fixed_size", out IOutParam<string> fixedSizeParam, size: 255)
         .ExecNonQueryAsync();
 
       string s = fixedSizeParam.Value;

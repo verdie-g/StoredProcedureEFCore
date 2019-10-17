@@ -31,31 +31,43 @@ namespace StoredProcedureEFCore
 
     public IStoredProcBuilder AddParam<T>(string name, T val)
     {
-      AddParamInner(name, val, ParameterDirection.Input, null);
+      AddParamInner(name, val, ParameterDirection.Input);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output, null);
+      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, ParamExtra extra)
     {
-      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output, extra);
+      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output, extra.Size, extra.Precision, extra.Scale);
+      return this;
+    }
+
+    public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, int size = 0, byte precision = 0, byte scale = 0)
+    {
+      outParam = AddOutputParamInner(name, val, ParameterDirection.Output, size, precision, scale);
+      return this;
+    }
+
+    public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, int size = 0, byte precision = 0, byte scale = 0)
+    {
+      outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output, size, precision, scale);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam)
     {
-      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput, null);
+      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput);
       return this;
     }
 
     public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, ParamExtra extra)
     {
-      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput, extra);
+      outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput, extra.Size, extra.Precision, extra.Scale);
       return this;
     }
 
@@ -72,13 +84,13 @@ namespace StoredProcedureEFCore
 
     public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam)
     {
-      retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue, null);
+      retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue);
       return this;
     }
 
     public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam, ParamExtra extra)
     {
-      retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue, extra);
+      retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue, extra.Size, extra.Precision, extra.Scale);
       return this;
     }
 
@@ -187,13 +199,13 @@ namespace StoredProcedureEFCore
       _cmd.Dispose();
     }
 
-    private OutputParam<T> AddOutputParamInner<T>(string name, T val, ParameterDirection direction, ParamExtra extra)
+    private OutputParam<T> AddOutputParamInner<T>(string name, T val, ParameterDirection direction, int size = 0, byte precision = 0, byte scale = 0)
     {
-      DbParameter param = AddParamInner(name, val, direction, extra);
+      DbParameter param = AddParamInner(name, val, direction, size, precision, scale);
       return new OutputParam<T>(param);
     }
 
-    private DbParameter AddParamInner<T>(string name, T val, ParameterDirection direction, ParamExtra extra)
+    private DbParameter AddParamInner<T>(string name, T val, ParameterDirection direction, int size = 0, byte precision = 0, byte scale = 0)
     {
       if (name is null)
         throw new ArgumentNullException(nameof(name));
@@ -203,12 +215,9 @@ namespace StoredProcedureEFCore
       param.Value = (object)val ?? DBNull.Value;
       param.Direction = direction;
       param.DbType = DbTypeConverter.ConvertToDbType<T>();
-      if (extra != null)
-      {
-        param.Precision = extra.Precision;
-        param.Scale = extra.Scale;
-        param.Size = extra.Size;
-      }
+      param.Size = size;
+      param.Precision = precision;
+      param.Scale = scale;
 
       _cmd.Parameters.Add(param);
       return param;

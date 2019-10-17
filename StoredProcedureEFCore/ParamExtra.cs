@@ -1,5 +1,8 @@
-﻿namespace StoredProcedureEFCore
+﻿using System;
+
+namespace StoredProcedureEFCore
 {
+  [Obsolete]
   public class ParamExtra
   {
     public byte Precision { get; set; }
