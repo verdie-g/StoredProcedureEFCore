@@ -1,22 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Title>StoredProcedureEFCore</Title>
     <Version>0.3.12</Version>
     <Authors>Grégoire Verdier</Authors>
-    <Description>Entity Framework Core extension to execute a stored procedure and map the result</Description>
+    <Description>Entity Framework Core extension to execute stored procedures and map the result to a custom model</Description>
     <RepositoryUrl>https://github.com/verdie-g/StoredProcedureEFCore</RepositoryUrl>
     <PackageProjectUrl>https://github.com/verdie-g/StoredProcedureEFCore</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/verdie-g/StoredProcedureEFCore/develop/LICENSE</PackageLicenseUrl>
-    <PackageTags>C# Stored Procedure Entity Framework Core Mapping IDataReader</PackageTags>
-    <Copyright>Copyright 2017</Copyright>
+    <PackageTags>C# Stored Procedure Entity Framework Core Mapping DbDataReader</PackageTags>
+    <Copyright>Copyright 2019</Copyright>
     <OutputType>Library</OutputType>
     <StartupObject />
     <AssemblyName>StoredProcedureEFCore</AssemblyName>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
   </ItemGroup>
 </Project>
