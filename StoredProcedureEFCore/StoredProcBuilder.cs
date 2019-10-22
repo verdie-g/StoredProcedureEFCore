@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Data;
 using System.Data.Common;
@@ -19,6 +20,7 @@ namespace StoredProcedureEFCore
       DbCommand cmd = ctx.Database.GetDbConnection().CreateCommand();
       cmd.CommandType = CommandType.StoredProcedure;
       cmd.CommandText = name;
+      cmd.Transaction = ctx.Database.CurrentTransaction?.GetDbTransaction();
 
       int? cmdTimeout = ctx.Database.GetCommandTimeout();
       if (cmdTimeout.HasValue)

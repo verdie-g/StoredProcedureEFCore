@@ -80,6 +80,11 @@ namespace StoredProcedureEFCore.Tests.SqlServer
           .ExecNonQueryAsync();
 
       var nullable = nullableParameter.Value;
+
+      using (var transaction = await ctx.Database.BeginTransactionAsync())
+      {
+        await ctx.LoadStoredProc("dbo.ListAll").ExecAsync(async r => rows = await r.ToListAsync<Model>());
+      }
     }
   }
 }
