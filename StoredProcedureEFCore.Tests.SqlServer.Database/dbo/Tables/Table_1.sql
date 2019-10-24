@@ -7,5 +7,3 @@
     CONSTRAINT [PK_Table_1] PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
-
-
