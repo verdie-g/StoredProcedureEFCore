@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -84,6 +85,17 @@ namespace StoredProcedureEFCore.Tests.SqlServer
             using (var transaction = await ctx.Database.BeginTransactionAsync())
             {
                 await ctx.LoadStoredProc("dbo.ListAll").ExecAsync(async r => rows = await r.ToListAsync<Model>());
+            }
+
+            try
+            {
+                var cts = new CancellationTokenSource();
+                cts.Cancel();
+                await ctx.LoadStoredProc("dbo.ListAll").ExecAsync(async r => rows = await r.ToListAsync<Model>(), cts.Token);
+            }
+            catch (TaskCanceledException)
+            {
+
             }
         }
     }

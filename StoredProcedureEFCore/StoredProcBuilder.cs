@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace StoredProcedureEFCore
@@ -116,7 +117,12 @@ namespace StoredProcedureEFCore
             }
         }
 
-        public async Task ExecAsync(Func<DbDataReader, Task> action)
+        public Task ExecAsync(Func<DbDataReader, Task> action)
+        {
+            return ExecAsync(action, CancellationToken.None);
+        }
+
+        public async Task ExecAsync(Func<DbDataReader, Task> action, CancellationToken cancellationToken)
         {
             if (action is null)
                 throw new ArgumentNullException(nameof(action));
@@ -124,7 +130,7 @@ namespace StoredProcedureEFCore
             try
             {
                 await OpenConnectionAsync();
-                using (DbDataReader r = await _cmd.ExecuteReaderAsync())
+                using (DbDataReader r = await _cmd.ExecuteReaderAsync(cancellationToken))
                 {
                     await action(r);
                 }
@@ -148,12 +154,18 @@ namespace StoredProcedureEFCore
             }
         }
 
-        public async Task ExecNonQueryAsync()
+        public Task ExecNonQueryAsync()
+        {
+            return ExecNonQueryAsync(CancellationToken.None);
+        }
+
+
+        public async Task ExecNonQueryAsync(CancellationToken cancellationToken)
         {
             try
             {
                 await OpenConnectionAsync();
-                await _cmd.ExecuteNonQueryAsync();
+                await _cmd.ExecuteNonQueryAsync(cancellationToken);
             }
             finally
             {
@@ -175,12 +187,17 @@ namespace StoredProcedureEFCore
             }
         }
 
-        public async Task ExecScalarAsync<T>(Action<T> action)
+        public Task ExecScalarAsync<T>(Action<T> action)
+        {
+            return ExecScalarAsync(action, CancellationToken.None);
+        }
+
+        public async Task ExecScalarAsync<T>(Action<T> action, CancellationToken cancellationToken)
         {
             try
             {
                 await OpenConnectionAsync();
-                object scalar = await _cmd.ExecuteScalarAsync();
+                object scalar = await _cmd.ExecuteScalarAsync(cancellationToken);
                 T val = DefaultIfDBNull<T>(scalar);
                 action(val);
             }
