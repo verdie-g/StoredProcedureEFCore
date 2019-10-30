@@ -14,7 +14,7 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model type</typeparam>
     internal class Mapper<T> where T : class, new()
     {
-        private static readonly ConcurrentDictionary<CacheKey, Prop[]> PropertiesCache = new ConcurrentDictionary<CacheKey, Prop[]>();
+        private static readonly ConcurrentDictionary<int, Prop[]> PropertiesCache = new ConcurrentDictionary<int, Prop[]>();
 
         private readonly DbDataReader _reader;
         private readonly Prop[] _properties;
@@ -73,6 +73,20 @@ namespace StoredProcedureEFCore
             return row;
         }
 
+        internal static int ComputePropertyKey(IEnumerable<string> columns)
+        {
+            unchecked
+            {
+                int hashCode = 17;
+                hashCode = (hashCode * 31) + typeof(T).GetHashCode();
+                foreach (string column in columns)
+                {
+                    hashCode = (hashCode * 31) + column.GetHashCode();
+                }
+                return hashCode;
+            }
+        }
+
         private Prop[] MapColumnsToProperties()
         {
             Type modelType = typeof(T);
@@ -81,8 +95,8 @@ namespace StoredProcedureEFCore
             for (int i = 0; i < _reader.FieldCount; ++i)
                 columns[i] = _reader.GetName(i);
 
-            var key = new CacheKey(columns, modelType);
-            if (PropertiesCache.TryGetValue(key, out Prop[] s))
+            int propKey = ComputePropertyKey(columns);
+            if (PropertiesCache.TryGetValue(propKey, out Prop[] s))
             {
                 return s;
             }
@@ -107,7 +121,7 @@ namespace StoredProcedureEFCore
                 });
             }
             Prop[] propertiesArray = properties.ToArray();
-            PropertiesCache[key] = propertiesArray;
+            PropertiesCache[propKey] = propertiesArray;
             return propertiesArray;
         }
     }

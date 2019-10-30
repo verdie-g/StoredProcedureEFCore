@@ -9,7 +9,7 @@ using Xunit;
 
 namespace StoredProcedureEFCore.Tests
 {
-    public class DbDataReaderTests
+    public class DbDataReaderTest
     {
         private List<TestModel> _testModelsCollection = new List<TestModel>()
         {
