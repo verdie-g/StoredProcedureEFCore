@@ -44,28 +44,28 @@ IStoredProcBuilder             LoadStoredProc(string name)
 
 ### IStoredProcBuilder
 ```csharp
-IStoredProcBuilder             AddParam<T>(string name, T val)                             // Input parameter
-IStoredProcBuilder             AddParam<T>(string name, T val, out IOutParam<T> outParam)  // Input/Ouput parameter
-IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam)         // Ouput parameter
-IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam)
-void                           Exec(Action<DbDataReader> action)
-void                           ExecNonQuery()
-void                           ExecScalar<T>(out T val)
+IStoredProcBuilder             AddParam<T>(string name, T val) // Input parameter
+IStoredProcBuilder             AddParam<T>(string name, T val, out IOutParam<T> outParam, int size, byte precision, byte scale) // Input/Ouput parameter
+IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam, int size, byte precision, byte scale) // Ouput parameter
+IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam, int size, byte precision, byte scale)
+IStoredProcBuilder             SetTimeout(int timeout)
+Task                           ExecAsync(Func<DbDataReader, Task> action, CancellationToken cancellationToken)
+Task                           ExecNonQueryAsync(CancellationToken cancellationToken)
+Task                           ExecScalarAsync<T>(Action<T> action, CancellationToken cancellationToken)
 ```
-Exec, ExecNonQuery, and ExecScalar have a corresponding async method.
 
 ### DbDataReader
 ```csharp
-List<T>                        ToList<T>()
-Dictionary<TKey, TValue>       ToDictionary<TKey, TValue>(Func<TValue, TKey> keyProjection)
-Dictionary<TKey, List<TValue>> ToLookup<TKey, TValue>(Func<TValue, TKey> keyProjection)
-HashSet<T>                     ToSet<T>()
-List<T>                        Column<T>()
-List<T>                        Column<T>(string columnName)
-T                              First<T>()
-T                              FirstOrDefault<T>()
-T                              Single<T>()
-T                              SingleOrDefault<T>()
+Task<List<T>>                        ToListAsync<T>()
+Task<Dictionary<TKey, TValue>>       ToDictionaryAsync<TKey, TValue>(Func<TValue, TKey> keyProjection)
+Task<Dictionary<TKey, List<TValue>>> ToLookupAsync<TKey, TValue>(Func<TValue, TKey> keyProjection)
+Task<HashSet<T>>                     ToSetAsync<T>()
+Task<List<T>>                        ColumnAsync<T>()
+Task<List<T>>                        ColumnAsync<T>(string columnName)
+Task<T>                              FirstAsync<T>()
+Task<T>                              FirstOrDefaultAsync<T>()
+Task<T>                              SingleAsync<T>()
+Task<T>                              SingleOrDefaultAsync<T>()
 ```
 All these methods have a corresponding async method : ToListAsync, ToDictionaryAsync, ...
 
