@@ -39,12 +39,6 @@ namespace StoredProcedureEFCore
             return this;
         }
 
-        public IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, ParamExtra extra)
-        {
-            outParam = AddOutputParamInner(name, default(T), ParameterDirection.Output, extra.Size, extra.Precision, extra.Scale);
-            return this;
-        }
-
         public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, int size = 0, byte precision = 0, byte scale = 0)
         {
             outParam = AddOutputParamInner(name, val, ParameterDirection.Output, size, precision, scale);
@@ -63,12 +57,6 @@ namespace StoredProcedureEFCore
             return this;
         }
 
-        public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, ParamExtra extra)
-        {
-            outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput, extra.Size, extra.Precision, extra.Scale);
-            return this;
-        }
-
         public IStoredProcBuilder AddParam(DbParameter parameter)
         {
             if (parameter == null)
@@ -83,12 +71,6 @@ namespace StoredProcedureEFCore
         public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam)
         {
             retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue);
-            return this;
-        }
-
-        public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam, ParamExtra extra)
-        {
-            retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue, extra.Size, extra.Precision, extra.Scale);
             return this;
         }
 

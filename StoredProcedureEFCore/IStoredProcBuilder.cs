@@ -27,9 +27,6 @@ namespace StoredProcedureEFCore
         /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/>.</param>
         IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam);
 
-        [Obsolete("Use AddParam with precision/scale/size parameters instead")]
-        IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, ParamExtra extra);
-
         /// <summary>
         /// Add input/output parameter.
         /// </summary>
@@ -49,9 +46,6 @@ namespace StoredProcedureEFCore
         /// <param name="name">Name of the parameter.</param>
         /// <param name="outParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/>.</param>
         IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam);
-
-        [Obsolete("Use AddParam with precision/scale/size parameters instead")]
-        IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, ParamExtra extra);
 
         /// <summary>
         /// Add output parameter.
@@ -76,14 +70,6 @@ namespace StoredProcedureEFCore
         /// <typeparam name="T">Type of the parameter. Can be nullable.</typeparam>
         /// <param name="retParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/>.</param>
         IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam);
-
-        /// <summary>
-        /// Add return value parameter
-        /// </summary>
-        /// <typeparam name="T">Type of the parameter. Can be nullable.</typeparam>
-        /// <param name="retParam">Created parameter. Value will be populated after calling <see cref="Exec(Action{DbDataReader})"/>.</param>
-        /// <param name="extra">Parameter extra informations.</param>
-        IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam, ParamExtra extra);
 
         /// <summary>
         /// Set the wait time before terminating the attempt to execute the stored procedure and generating an error.
