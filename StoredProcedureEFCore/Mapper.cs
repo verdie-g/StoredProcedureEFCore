@@ -126,9 +126,19 @@ namespace StoredProcedureEFCore
                     continue;
 
                 ParameterExpression instance = Expression.Parameter(typeof(object), "instance");
-                ParameterExpression argument = Expression.Parameter(typeof(object), "value");
-                MethodCallExpression setterCall = Expression.Call(Expression.Convert(instance, prop.DeclaringType), prop.GetSetMethod(), Expression.Convert(argument, prop.PropertyType));
-                var setter = (Action<object, object>) Expression.Lambda(setterCall, instance, argument).Compile();
+                ParameterExpression value = Expression.Parameter(typeof(object), "value");
+
+                // "x as T" is faster than "(T) x" if x is a reference type
+                UnaryExpression instanceCast = prop.DeclaringType.IsValueType
+                    ? Expression.Convert(instance, prop.DeclaringType)
+                    : Expression.TypeAs(instance, prop.DeclaringType);
+
+                UnaryExpression valueCast = prop.PropertyType.IsValueType
+                    ? Expression.Convert(value, prop.PropertyType)
+                    : Expression.TypeAs(value, prop.PropertyType);
+
+                MethodCallExpression setterCall = Expression.Call(instanceCast, prop.GetSetMethod(), valueCast);
+                var setter = (Action<object, object>) Expression.Lambda(setterCall, instance, value).Compile();
 
                 properties.Add(new Prop
                 {
