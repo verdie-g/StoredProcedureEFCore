@@ -15,6 +15,9 @@ namespace StoredProcedureEFCore
     /// <typeparam name="T">Model type</typeparam>
     internal class Mapper<T> where T : class, new()
     {
+        /// <summary>
+        /// Contains different columns set information mapped to type <typeparamref name="T"/>.
+        /// </summary>
         private static readonly ConcurrentDictionary<int, Prop[]> PropertiesCache = new ConcurrentDictionary<int, Prop[]>();
 
         private readonly DbDataReader _reader;
@@ -94,7 +97,6 @@ namespace StoredProcedureEFCore
             unchecked
             {
                 int hashCode = 17;
-                hashCode = (hashCode * 31) + typeof(T).GetHashCode();
                 foreach (string column in columns)
                 {
                     hashCode = (hashCode * 31) + column.GetHashCode();

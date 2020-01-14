@@ -54,11 +54,11 @@ namespace StoredProcedureEFCore.UTest
         }
 
         [Test]
-        public void KeyDiffersIfTypeDiffers()
+        public void KeyDoesntDiffersIfTypeDiffers()
         {
             var key1 = Mapper<TestModel>.ComputePropertyKey(Array.Empty<string>());
             var key2 = Mapper<TestModelClone>.ComputePropertyKey(Array.Empty<string>());
-            Assert.AreNotEqual(key1, key2);
+            Assert.AreEqual(key1, key2);
         }
 
         private class TestModelClone : TestModel { }
