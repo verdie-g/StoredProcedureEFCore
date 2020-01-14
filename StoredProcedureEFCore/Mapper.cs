@@ -58,9 +58,9 @@ namespace StoredProcedureEFCore
         /// <param name="cancellationToken">The cancellation instruction, which propagates a notification that operations should be canceled</param>
         public async Task MapAsync(Action<T> action, CancellationToken cancellationToken)
         {
-            while (await _reader.ReadAsync(cancellationToken))
+            while (await _reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                T row = await MapNextRowAsync(cancellationToken);
+                T row = await MapNextRowAsync(cancellationToken).ConfigureAwait(false);
                 action(row);
             }
         }
@@ -86,7 +86,9 @@ namespace StoredProcedureEFCore
             T row = new T();
             for (int i = 0; i < _properties.Length; ++i)
             {
-                object value = await _reader.IsDBNullAsync(_properties[i].ColumnOrdinal, cancellationToken) ? null : _reader.GetValue(_properties[i].ColumnOrdinal);
+                object value = await _reader.IsDBNullAsync(_properties[i].ColumnOrdinal, cancellationToken).ConfigureAwait(false)
+                    ? null
+                    : _reader.GetValue(_properties[i].ColumnOrdinal);
                 _properties[i].Setter(row, value);
             }
             return row;

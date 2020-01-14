@@ -47,7 +47,7 @@ namespace StoredProcedureEFCore
         {
             var res = new List<T>();
             var mapper = new Mapper<T>(reader);
-            await mapper.MapAsync(row => res.Add(row), cancellationToken);
+            await mapper.MapAsync(row => res.Add(row), cancellationToken).ConfigureAwait(false);
             return res;
         }
 
@@ -167,9 +167,9 @@ namespace StoredProcedureEFCore
         public static async Task<List<T>> ColumnAsync<T>(this DbDataReader reader, int ordinal, CancellationToken cancellationToken) where T : IComparable
         {
             var res = new List<T>();
-            while (await reader.ReadAsync(cancellationToken))
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                T value = await reader.IsDBNullAsync(ordinal, cancellationToken) ? default(T) : (T) reader.GetValue(ordinal);
+                T value = await reader.IsDBNullAsync(ordinal, cancellationToken).ConfigureAwait(false) ? default(T) : (T) reader.GetValue(ordinal);
                 res.Add(value);
             }
             return res;
@@ -224,8 +224,7 @@ namespace StoredProcedureEFCore
             {
                 TKey key = keyProjection(val);
                 res[key] = val;
-            },
-            cancellationToken);
+            }, cancellationToken).ConfigureAwait(false);
 
             return res;
         }
@@ -296,8 +295,7 @@ namespace StoredProcedureEFCore
                 {
                     res[key] = new List<TValue>() { val };
                 }
-            },
-            cancellationToken);
+            }, cancellationToken).ConfigureAwait(false);
 
             return res;
         }
@@ -340,7 +338,7 @@ namespace StoredProcedureEFCore
         public static async Task<HashSet<T>> ToSetAsync<T>(this DbDataReader reader, CancellationToken cancellationToken) where T : IComparable
         {
             var res = new HashSet<T>();
-            while (await reader.ReadAsync(cancellationToken))
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
                 T val = (T) reader.GetValue(0);
                 res.Add(val);
@@ -505,19 +503,19 @@ namespace StoredProcedureEFCore
 
         private static async Task<T> FirstAsync<T>(DbDataReader reader, bool orDefault, bool throwIfNotSingle, CancellationToken cancellationToken) where T : class, new()
         {
-            if (await reader.ReadAsync(cancellationToken))
+            if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
                 var mapper = new Mapper<T>(reader);
-                T row = await mapper.MapNextRowAsync(cancellationToken);
+                T row = await mapper.MapNextRowAsync(cancellationToken).ConfigureAwait(false);
 
-                if (throwIfNotSingle && await reader.ReadAsync(cancellationToken))
+                if (throwIfNotSingle && await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                     throw new InvalidOperationException(MoreThanOneElementError);
 
                 // Siphon out all the remaining records to allow for long running sprocs to be cancelled. If we leave
                 // out of here without looping over the remaining records, a long running sproc will run to its end with
                 // no chance to be cancelled. This is caused by the fact that DbDataReader.Dispose does not react to
                 // cancellations and simply waits for the sproc to complete.
-                while (await reader.ReadAsync(cancellationToken))
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                     continue;
 
                 return row;

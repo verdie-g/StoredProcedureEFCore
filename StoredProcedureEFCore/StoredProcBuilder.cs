@@ -111,14 +111,14 @@ namespace StoredProcedureEFCore
 
             try
             {
-                await OpenConnectionAsync(cancellationToken);
-                using (DbDataReader r = await _cmd.ExecuteReaderAsync(cancellationToken))
+                await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+                using (DbDataReader r = await _cmd.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
                 {
                     try
                     {
-                        await action(r);
+                        await action(r).ConfigureAwait(false);
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         // In case the action bombs out, cancel the command and rethrow to propagate the actual action
                         // exception. If we don't cancel the command, we will be stuck on disposing of the reader until
@@ -162,8 +162,8 @@ namespace StoredProcedureEFCore
         {
             try
             {
-                await OpenConnectionAsync(cancellationToken);
-                await _cmd.ExecuteNonQueryAsync(cancellationToken);
+                await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+                await _cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {
@@ -194,8 +194,8 @@ namespace StoredProcedureEFCore
         {
             try
             {
-                await OpenConnectionAsync(cancellationToken);
-                object scalar = await _cmd.ExecuteScalarAsync(cancellationToken);
+                await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+                object scalar = await _cmd.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
                 T val = DefaultIfDBNull<T>(scalar);
                 action(val);
             }
