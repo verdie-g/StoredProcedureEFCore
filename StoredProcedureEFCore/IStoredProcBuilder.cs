@@ -118,21 +118,21 @@ namespace StoredProcedureEFCore
         /// <summary>
         /// Execute the stored procedure and return the first column of the first row.
         /// </summary>
-        /// <typeparam name="T">Type of the scalar value</param>
+        /// <typeparam name="T">Type of the scalar value.</typeparam>
         /// <param name="val">The first column of the first row in the result set.</param>
         void ExecScalar<T>(out T val);
 
         /// <summary>
         /// Execute the stored procedure and return the first column of the first row.
         /// </summary>
-        /// <typeparam name="T">Type of the scalar value</param>
+        /// <typeparam name="T">Type of the scalar value.</typeparam>
         /// <param name="action">Action applied to the first column of the first row in the result set.</param>
         Task ExecScalarAsync<T>(Action<T> action);
 
         /// <summary>
         /// Execute the stored procedure and return the first column of the first row.
         /// </summary>
-        /// <typeparam name="T">Type of the scalar value.</param>.
+        /// <typeparam name="T">Type of the scalar value.</typeparam>.
         /// <param name="action">Action applied to the first column of the first row in the result set.</param>
         /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
         /// <exception cref="TaskCanceledException">When <paramref name="cancellationToken"/> was cancelled.</exception>

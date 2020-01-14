@@ -252,7 +252,7 @@ namespace StoredProcedureEFCore
                 }
                 else
                 {
-                    res[key] = new List<TValue>() { val };
+                    res[key] = new List<TValue> { val };
                 }
             });
             return res;
@@ -268,7 +268,7 @@ namespace StoredProcedureEFCore
         /// <returns></returns>
         public static Task<Dictionary<TKey, List<TValue>>> ToLookupAsync<TKey, TValue>(this DbDataReader reader, Func<TValue, TKey> keyProjection) where TKey : IComparable where TValue : class, new()
         {
-            return ToLookupAsync<TKey, TValue>(reader, keyProjection, CancellationToken.None);
+            return ToLookupAsync(reader, keyProjection, CancellationToken.None);
         }
 
         /// <summary>
@@ -513,10 +513,10 @@ namespace StoredProcedureEFCore
                 if (throwIfNotSingle && await reader.ReadAsync(cancellationToken))
                     throw new InvalidOperationException(MoreThanOneElementError);
 
-                // Siphon out all the remaining records to allow for long running sprocs to be cancelled.
-                // If we leave out of here without looping over the remaining records, a long running sproc
-                // will run to its end with no chance to be cancelled.
-                // This is caused by the fact that DbDataReader.Dispose does not react to cancellations and simply waits for the sproc to complete.
+                // Siphon out all the remaining records to allow for long running sprocs to be cancelled. If we leave
+                // out of here without looping over the remaining records, a long running sproc will run to its end with
+                // no chance to be cancelled. This is caused by the fact that DbDataReader.Dispose does not react to
+                // cancellations and simply waits for the sproc to complete.
                 while (await reader.ReadAsync(cancellationToken))
                     continue;
 

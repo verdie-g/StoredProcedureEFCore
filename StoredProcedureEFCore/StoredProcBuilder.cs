@@ -10,8 +10,8 @@ namespace StoredProcedureEFCore
 {
     internal class StoredProcBuilder : IStoredProcBuilder
     {
-        private const string _retParamName = "_retParam";
-        private DbCommand _cmd;
+        private const string RetParamName = "_retParam";
+        private readonly DbCommand _cmd;
 
         public StoredProcBuilder(DbContext ctx, string name)
         {
@@ -70,7 +70,7 @@ namespace StoredProcedureEFCore
 
         public IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam)
         {
-            retParam = AddOutputParamInner(_retParamName, default(T), ParameterDirection.ReturnValue);
+            retParam = AddOutputParamInner(RetParamName, default(T), ParameterDirection.ReturnValue);
             return this;
         }
 
@@ -120,12 +120,14 @@ namespace StoredProcedureEFCore
                     }
                     catch(Exception)
                     {
-                        // In case the action bombs out, cancel the command and rethrow to propagate the actual action exception.
-                        // If we don't cancel the command, we will be stuck on disposing of the reader until the sproc completes, even though the action has already thrown an exception.
-                        // This is also the case when the cancellation token is cancelled after the action exception but before the sproc completes:
-                        // we will still be stuck on disposing of the reader until the sproc completes.
-                        // This is caused by the fact that DbDataReader.Dispose does not react to cancellations and simply waits for the sproc to complete.
-                        // The only way to cancel the execution when the reader has been engaged and the action has thrown, is to cancel the command.
+                        // In case the action bombs out, cancel the command and rethrow to propagate the actual action
+                        // exception. If we don't cancel the command, we will be stuck on disposing of the reader until
+                        // the sproc completes, even though the action has already thrown an exception. This is also the
+                        // case when the cancellation token is cancelled after the action exception but before the sproc
+                        // completes: we will still be stuck on disposing of the reader until the sproc completes. This
+                        // is caused by the fact that DbDataReader.Dispose does not react to cancellations and simply
+                        // waits for the sproc to complete. // The only way to cancel the execution when the reader has
+                        // been engaged and the action has thrown, is to cancel the command.
                         _cmd.Cancel();
                         throw;
                     }
@@ -243,14 +245,10 @@ namespace StoredProcedureEFCore
 
         private Task OpenConnectionAsync(CancellationToken cancellationToken)
         {
-            if (_cmd.Connection.State == ConnectionState.Closed)
-            {
-                return _cmd.Connection.OpenAsync(cancellationToken);
-            }
-            return Task.CompletedTask;
+            return _cmd.Connection.State == ConnectionState.Closed ? _cmd.Connection.OpenAsync(cancellationToken) : Task.CompletedTask;
         }
 
-        private T DefaultIfDBNull<T>(object o)
+        private static T DefaultIfDBNull<T>(object o)
         {
             return o == DBNull.Value ? default(T) : (T) o;
         }

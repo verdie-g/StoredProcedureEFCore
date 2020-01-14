@@ -6,7 +6,7 @@ namespace StoredProcedureEFCore
 {
     internal static class DbTypeConverter
     {
-        private static Dictionary<Type, DbType> _typeMap = new Dictionary<Type, DbType>
+        private static readonly Dictionary<Type, DbType> _typeMap = new Dictionary<Type, DbType>
         {
             [typeof(byte)] = DbType.Byte,
             [typeof(sbyte)] = DbType.SByte,
