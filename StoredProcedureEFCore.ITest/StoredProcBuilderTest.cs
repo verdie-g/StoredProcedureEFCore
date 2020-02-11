@@ -153,23 +153,27 @@ namespace StoredProcedureEFCore.ITest
         }
 
         [Test]
-        public async Task NullableParameterOut()
+        [TestCase(null)]
+        [TestCase(21)]
+        public async Task NullableParameterOut(int? nullableIn)
         {
             await _db.LoadStoredProc("output_nullable")
-                .AddParam("nullable", out IOutParam<int?> nullable)
+                .AddParam("nullable_in", nullableIn)
+                .AddParam("nullable_out", out IOutParam<int?> nullableOut)
                 .ExecNonQueryAsync();
 
-            Assert.AreEqual(null, nullable.Value);
+            Assert.AreEqual(nullableIn, nullableOut.Value);
         }
 
         [Test]
         public async Task NullableParameterOutWithNonNullableType()
         {
             await _db.LoadStoredProc("output_nullable")
-                .AddParam("nullable", out IOutParam<int> nullable)
+                .AddParam("nullable_in", (int?) null)
+                .AddParam("nullable_out", out IOutParam<int> nullableOut)
                 .ExecNonQueryAsync();
 
-            Assert.Throws<InvalidOperationException>(() => _ = nullable.Value);
+            Assert.Throws<InvalidOperationException>(() => _ = nullableOut.Value);
         }
 
         [Test]

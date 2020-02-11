@@ -1,5 +1,8 @@
-﻿CREATE OR REPLACE FUNCTION output_nullable(OUT nullable INT) AS $$
+﻿CREATE OR REPLACE FUNCTION output_nullable(
+    nullable_in INT,
+    OUT nullable_out INT
+) AS $$
 BEGIN
-    nullable = null;
+    nullable_out = nullable_in;
 END
 $$ LANGUAGE plpgsql;

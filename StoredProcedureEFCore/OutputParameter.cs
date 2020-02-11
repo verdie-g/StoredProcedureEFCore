@@ -26,6 +26,12 @@ namespace StoredProcedureEFCore
                     }
                 }
 
+                var nullableUnderlyingType = Nullable.GetUnderlyingType(typeof(T));
+                if (nullableUnderlyingType != null)
+                {
+                    return (T) Convert.ChangeType(_dbParam.Value, nullableUnderlyingType);
+                }
+
                 return (T) Convert.ChangeType(_dbParam.Value, typeof(T));
             }
         }

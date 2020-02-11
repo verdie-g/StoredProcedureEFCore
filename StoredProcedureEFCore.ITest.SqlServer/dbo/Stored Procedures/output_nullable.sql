@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[output_nullable]
-  @nullable INT OUTPUT
+  @nullable_in INT,
+  @nullable_out INT OUTPUT
 AS
 BEGIN
-    SET @nullable = null
+    SET @nullable_out = @nullable_in;
 END
