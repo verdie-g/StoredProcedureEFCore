@@ -39,19 +39,19 @@ ctx.LoadStoredProc("dbo.ListAll")
 
 ### DbContext
 ```csharp
-IStoredProcBuilder             LoadStoredProc(string name)
+IStoredProcBuilder LoadStoredProc(string name)
 ```
 
 ### IStoredProcBuilder
 ```csharp
-IStoredProcBuilder             AddParam<T>(string name, T val) // Input parameter
-IStoredProcBuilder             AddParam<T>(string name, T val, out IOutParam<T> outParam, int size, byte precision, byte scale) // Input/Ouput parameter
-IStoredProcBuilder             AddParam<T>(string name, out IOutParam<T> outParam, int size, byte precision, byte scale) // Ouput parameter
-IStoredProcBuilder             ReturnValue<T>(out IOutParam<T> retParam, int size, byte precision, byte scale)
-IStoredProcBuilder             SetTimeout(int timeout)
-Task                           ExecAsync(Func<DbDataReader, Task> action, CancellationToken cancellationToken)
-Task                           ExecNonQueryAsync(CancellationToken cancellationToken)
-Task                           ExecScalarAsync<T>(Action<T> action, CancellationToken cancellationToken)
+IStoredProcBuilder AddParam<T>(string name, T val) // Input parameter
+IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, int size, byte precision, byte scale) // Input/Ouput parameter
+IStoredProcBuilder AddParam<T>(string name, out IOutParam<T> outParam, int size, byte precision, byte scale) // Ouput parameter
+IStoredProcBuilder ReturnValue<T>(out IOutParam<T> retParam, int size, byte precision, byte scale)
+IStoredProcBuilder SetTimeout(int timeout)
+Task               ExecAsync(Func<DbDataReader, Task> action, CancellationToken cancellationToken)
+Task<int>          ExecNonQueryAsync(CancellationToken cancellationToken)
+Task               ExecScalarAsync<T>(Action<T> action, CancellationToken cancellationToken)
 ```
 
 ### DbDataReader
