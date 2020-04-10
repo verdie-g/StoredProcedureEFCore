@@ -41,7 +41,7 @@ namespace StoredProcedureEFCore
 
         public IStoredProcBuilder AddParam<T>(string name, T val, out IOutParam<T> outParam, int size = 0, byte precision = 0, byte scale = 0)
         {
-            outParam = AddOutputParamInner(name, val, ParameterDirection.Output, size, precision, scale);
+            outParam = AddOutputParamInner(name, val, ParameterDirection.InputOutput, size, precision, scale);
             return this;
         }
 
