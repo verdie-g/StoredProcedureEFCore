@@ -139,12 +139,12 @@ namespace StoredProcedureEFCore
             }
         }
 
-        public void ExecNonQuery()
+        public int ExecNonQuery()
         {
             try
             {
                 OpenConnection();
-                _cmd.ExecuteNonQuery();
+                return _cmd.ExecuteNonQuery();
             }
             finally
             {
@@ -152,18 +152,18 @@ namespace StoredProcedureEFCore
             }
         }
 
-        public Task ExecNonQueryAsync()
+        public Task<int> ExecNonQueryAsync()
         {
             return ExecNonQueryAsync(CancellationToken.None);
         }
 
 
-        public async Task ExecNonQueryAsync(CancellationToken cancellationToken)
+        public async Task<int> ExecNonQueryAsync(CancellationToken cancellationToken)
         {
             try
             {
                 await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-                await _cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                return await _cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {

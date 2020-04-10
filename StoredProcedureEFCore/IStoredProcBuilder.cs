@@ -101,19 +101,22 @@ namespace StoredProcedureEFCore
         /// <summary>
         /// Execute the stored procedure.
         /// </summary>
-        void ExecNonQuery();
+        /// <returns>The number of rows affected.</returns>
+        int ExecNonQuery();
 
         /// <summary>
         /// Execute the stored procedure.
         /// </summary>
-        Task ExecNonQueryAsync();
+        /// <returns>The number of rows affected.</returns>
+        Task<int> ExecNonQueryAsync();
 
         /// <summary>
         /// Execute the stored procedure.
         /// </summary>
         /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
         /// <exception cref="TaskCanceledException">When <paramref name="cancellationToken"/> was cancelled.</exception>
-        Task ExecNonQueryAsync(CancellationToken cancellationToken);
+        /// <returns>The number of rows affected.</returns>
+        Task<int> ExecNonQueryAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Execute the stored procedure and return the first column of the first row.
