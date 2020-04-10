@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Title>StoredProcedureEFCore</Title>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Grégoire Verdier</Authors>
     <Description>Entity Framework Core extension to execute stored procedures and map the result to a custom model</Description>
     <RepositoryUrl>https://github.com/verdie-g/StoredProcedureEFCore</RepositoryUrl>
