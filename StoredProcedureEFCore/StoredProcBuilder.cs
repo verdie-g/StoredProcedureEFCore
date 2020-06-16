@@ -207,7 +207,8 @@ namespace StoredProcedureEFCore
 
         public void Dispose()
         {
-            _cmd.Connection.Close();
+            if (_cmd.Transaction == null)
+                _cmd.Connection.Close();
             _cmd.Dispose();
         }
 
