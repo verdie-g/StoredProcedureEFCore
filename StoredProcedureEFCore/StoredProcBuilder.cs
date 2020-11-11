@@ -85,9 +85,10 @@ namespace StoredProcedureEFCore
             if (action is null)
                 throw new ArgumentNullException(nameof(action));
 
+            bool ownsConnection = false;
             try
             {
-                OpenConnection();
+                ownsConnection = OpenConnection();
                 using (DbDataReader r = _cmd.ExecuteReader())
                 {
                     action(r);
@@ -95,6 +96,8 @@ namespace StoredProcedureEFCore
             }
             finally
             {
+                if (ownsConnection)
+                    CloseConnection();
                 Dispose();
             }
         }
@@ -109,9 +112,10 @@ namespace StoredProcedureEFCore
             if (action is null)
                 throw new ArgumentNullException(nameof(action));
 
+            bool ownsConnection = false;
             try
             {
-                await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+                ownsConnection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
                 using (DbDataReader r = await _cmd.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
                 {
                     try
@@ -135,19 +139,24 @@ namespace StoredProcedureEFCore
             }
             finally
             {
+                if (ownsConnection)
+                    CloseConnection();
                 Dispose();
             }
         }
 
         public int ExecNonQuery()
         {
+            bool ownsConnection = false;
             try
             {
-                OpenConnection();
+                ownsConnection = OpenConnection();
                 return _cmd.ExecuteNonQuery();
             }
             finally
             {
+                if (ownsConnection)
+                    CloseConnection();
                 Dispose();
             }
         }
@@ -160,27 +169,33 @@ namespace StoredProcedureEFCore
 
         public async Task<int> ExecNonQueryAsync(CancellationToken cancellationToken)
         {
+            bool ownsConnection = false;
             try
             {
-                await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+                ownsConnection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
                 return await _cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {
+                if (ownsConnection)
+                    CloseConnection();
                 Dispose();
             }
         }
 
         public void ExecScalar<T>(out T val)
         {
+            bool ownsConnection = false;
             try
             {
-                OpenConnection();
+                ownsConnection = OpenConnection();
                 object scalar = _cmd.ExecuteScalar();
                 val = DefaultIfDBNull<T>(scalar);
             }
             finally
             {
+                if (ownsConnection)
+                    CloseConnection();
                 Dispose();
             }
         }
@@ -192,23 +207,24 @@ namespace StoredProcedureEFCore
 
         public async Task ExecScalarAsync<T>(Action<T> action, CancellationToken cancellationToken)
         {
+            bool ownsConnection = false;
             try
             {
-                await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+                ownsConnection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
                 object scalar = await _cmd.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
                 T val = DefaultIfDBNull<T>(scalar);
                 action(val);
             }
             finally
             {
+                if (ownsConnection)
+                    CloseConnection();
                 Dispose();
             }
         }
 
         public void Dispose()
         {
-            if (_cmd.Transaction == null)
-                _cmd.Connection.Close();
             _cmd.Dispose();
         }
 
@@ -236,17 +252,33 @@ namespace StoredProcedureEFCore
             return param;
         }
 
-        private void OpenConnection()
+        private bool OpenConnection()
         {
             if (_cmd.Connection.State == ConnectionState.Closed)
             {
                 _cmd.Connection.Open();
+
+                return true;
             }
+
+            return false;
         }
 
-        private Task OpenConnectionAsync(CancellationToken cancellationToken)
+        private async Task<bool> OpenConnectionAsync(CancellationToken cancellationToken)
         {
-            return _cmd.Connection.State == ConnectionState.Closed ? _cmd.Connection.OpenAsync(cancellationToken) : Task.CompletedTask;
+            if (_cmd.Connection.State == ConnectionState.Closed)
+            {
+                await _cmd.Connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void CloseConnection()
+        {
+            _cmd.Connection.Close();
         }
 
         private static T DefaultIfDBNull<T>(object o)
